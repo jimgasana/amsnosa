@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AMS-NOSA | Agents Management System National Operating System Africa</title>
+<style>
+/* ============================================================
+   AMS-NOSA CORE DESIGN SYSTEM
+   Aesthetic: Industrial Command Center, Refined Utilitarian
+   Palette: Deep Navy, Atomic Amber, Reactor Green, Steel White
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600;800&display=swap');
+
+:root {
+  --navy: #050d1a;
+  --navy-mid: #0a1628;
+  --navy-light: #0f2040;
+  --panel: #071220;
+  --border: #1a3a5c;
+  --border-bright: #2a5a8c;
+  --amber: #f59e0b;
+  --amber-dim: #b5750a;
+  --green: #10d47a;
+  --green-dim: #0a8a4f;
+  --red: #ef4444;
+  --red-dim: #991b1b;
+  --blue-accent: #38bdf8;
+  --steel: #94a3b8;
+  --white: #e2e8f0;
+  --white-dim: #64748b;
+  --font-display: 'Exo 2', sans-serif;
+  --font-ui: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --radius: 3px;
+  --glow-amber: 0 0 20px rgba(245,158,11,0.25);
+  --glow-green: 0 0 20px rgba(16,212,122,0.25);
+  --glow-blue: 0 0 20px rgba(56,189,248,0.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(56,189,248,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(245,158,11,0.04) 0%, transparent 50%);
+}
+
+/* GRID TEXTURE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,58,92,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,58,92,0.15) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   TOP HEADER BAR
+   ============================================================ */
+
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: rgba(5,13,26,0.97);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--amber);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.brand-mark::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: var(--amber);
+  border-radius: 50%;
+  animation: pulse-amber 2s ease-in-out infinite;
+}
+
+.brand-mark::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(245,158,11,0.4);
+  border-radius: 50%;
+  animation: spin 8s linear infinite;
+}
+
+@keyframes pulse-amber {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--white);
+  letter-spacing: 2px;
+}
+
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--amber);
+  letter-spacing: 1px;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.system-clock {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--steel);
+  display: none;
+}
+
+@media (min-width: 480px) { .system-clock { display: block; } }
+
+.status-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.readiness-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  border-radius: var(--radius);
+  background: rgba(245,158,11,0.08);
+}
+
+/* ============================================================
+   NAVIGATION SIDEBAR
+   ============================================================ */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 56px;
+  bottom: 0;
+  width: 220px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 900;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open { transform: translateX(0); }
+
+@media (min-width: 900px) {
+  .sidebar { transform: translateX(0); }
+}
+
+.sidebar-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--white-dim);
+  letter-spacing: 2px;
+  padding: 16px 16px 6px;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--steel);
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(56,189,248,0.05);
+  color: var(--white);
+  border-left-color: var(--border-bright);
+}
+
+.nav-item.active {
+  background: rgba(245,158,11,0.08);
+  color: var(--amber);
+  border-left-color: var(--amber);
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-icon svg { width: 16px; height: 16px; fill: currentColor; }
+
+.nav-badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(245,158,11,0.15);
+  color: var(--amber);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-footer p {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--white-dim);
+  line-height: 1.6;
+}
+
+/* HAMBURGER */
+.menu-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--steel);
+  width: 36px; height: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.menu-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--steel);
+  transition: all 0.2s;
+}
+
+@media (min-width: 900px) { .menu-toggle { display: none; } }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 850;
+  display: none;
+}
+
+.overlay.show { display: block; }
+
+@media (min-width: 900px) { .overlay { display: none !important; } }
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+
+.main {
+  margin-top: 56px;
+  margin-left: 0;
+  min-height: calc(100vh - 56px);
+  position: relative;
+  z-index: 1;
+  transition: margin-left 0.3s;
+}
+
+@media (min-width: 900px) {
+  .main { margin-left: 220px; }
+}
+
+/* MODULE PAGES */
+.module-page {
+  display: none;
+  padding: 20px 16px 80px;
+  animation: fadeIn 0.3s ease;
+}
+
+.module-page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+
+.page-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  color: var(--white);
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--amber);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+.page-desc {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--steel);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* CARD GRID */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 600px) { .card-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .card-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+.card-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 700px) { .card-grid-2 { grid-template-columns: 1fr 1fr; } }
+
+.panel-card {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), transparent);
+  opacity: 0.6;
+}
+
+.panel-card.green-accent::before { background: linear-gradient(90deg, var(--green), transparent); }
+.panel-card.blue-accent::before { background: linear-gradient(90deg, var(--blue-accent), transparent); }
+.panel-card.red-accent::before { background: linear-gradient(90deg, var(--red), transparent); }
+
+.card-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--white-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.card-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  color: var(--white);
+  line-height: 1;
+}
+
+.card-value.amber { color: var(--amber); }
+.card-value.green { color: var(--green); }
+.card-value.blue { color: var(--blue-accent); }
+.card-value.red { color: var(--red); }
+
+.card-unit {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--steel);
+  margin-top: 4px;
+}
+
+.card-trend {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  margin-top: 6px;
+}
+
+.card-trend.up { color: var(--green); }
+.card-trend.down { color: var(--red); }
+.card-trend.neutral { color: var(--steel); }
+
+/* SECTION TITLE */
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--blue-accent);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* PROGRESS BAR */
+.progress-wrap {
+  margin-bottom: 14px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--steel);
+  margin-bottom: 5px;
+}
+
+.progress-label strong { color: var(--white); font-weight: 600; }
+
+.progress-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
+  background: var(--amber);
+}
+
+.progress-fill.green { background: var(--green); }
+.progress-fill.blue { background: var(--blue-accent); }
+.progress-fill.red { background: var(--red); }
+
+/* BUTTON */
+.btn {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: var(--navy);
+}
+
+.btn-primary:hover { background: #fbbf24; box-shadow: var(--glow-amber); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--steel);
+  border: 1px solid var(--border);
+}
+
+.btn-outline:hover { border-color: var(--border-bright); color: var(--white); }
+
+.btn-green {
+  background: var(--green-dim);
+  color: var(--white);
+}
+
+.btn-green:hover { background: var(--green); box-shadow: var(--glow-green); }
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+/* SELECT / INPUT */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 600px) { .form-row { grid-template-columns: 1fr 1fr; } }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--steel);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.form-select, .form-input {
+  background: var(--navy);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.form-select:focus, .form-input:focus { border-color: var(--amber); }
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--amber);
+  cursor: pointer;
+}
+
+/* TABLE */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--white-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(26,58,92,0.5);
+  color: var(--steel);
+  font-family: var(--font-ui);
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+.data-table td.highlight { color: var(--white); font-weight: 600; }
+
+.data-table td .tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.tag-green { background: rgba(16,212,122,0.15); color: var(--green); }
+.tag-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+.tag-red { background: rgba(239,68,68,0.15); color: var(--red); }
+.tag-blue { background: rgba(56,189,248,0.15); color: var(--blue-accent); }
+
+/* CHART CANVAS */
+.chart-container {
+  background: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.chart-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--steel);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+canvas { display: block; width: 100%; }
+
+/* GAUGE */
+.gauge-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.gauge-item {
+  flex: 1;
+  min-width: 120px;
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+}
+
+.gauge-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.gauge-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--steel);
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+/* ALERT / NOTICE */
+.alert {
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.alert-icon {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alert-amber {
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: var(--white);
+}
+
+.alert-amber .alert-icon { background: var(--amber); color: var(--navy); }
+
+.alert-green {
+  background: rgba(16,212,122,0.08);
+  border: 1px solid rgba(16,212,122,0.3);
+  color: var(--white);
+}
+
+.alert-green .alert-icon { background: var(--green); color: var(--navy); }
+
+.alert-red {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: var(--white);
+}
+
+.alert-red .alert-icon { background: var(--red); color: var(--white); }
+
+.alert-blue {
+  background: rgba(56,189,248,0.08);
+  border: 1px solid rgba(56,189,248,0.3);
+  color: var(--white);
+}
+
+.alert-blue .alert-icon { background: var(--blue-accent); color: var(--navy); }
+
+/* LEDGER ITEM */
+.ledger-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+
+.ledger-item:last-child { border-bottom: none; }
+.ledger-left { display: flex; flex-direction: column; gap: 2px; }
+.ledger-id { font-family: var(--font-mono); font-size: 0.65rem; color: var(--steel); }
+.ledger-desc { color: var(--white); font-weight: 500; }
+.ledger-right { text-align: right; }
+.ledger-amount { font-family: var(--font-display); font-weight: 700; color: var(--amber); }
+.ledger-status { font-family: var(--font-mono); font-size: 0.6rem; }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 8px; bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -21px;
+  top: 4px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--navy);
+}
+
+.timeline-dot.done { border-color: var(--green); background: var(--green); }
+.timeline-dot.active { border-color: var(--amber); background: var(--amber); animation: pulse-amber 1.5s infinite; }
+.timeline-dot.pending { border-color: var(--border); }
+
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--steel);
+  margin-bottom: 2px;
+}
+
+.timeline-name { font-weight: 600; font-size: 0.9rem; color: var(--white); }
+.timeline-detail { font-size: 0.8rem; color: var(--steel); margin-top: 2px; }
+
+/* READINESS RING */
+.readiness-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.readiness-ring {
+  position: relative;
+  width: 140px; height: 140px;
+}
+
+.readiness-ring svg {
+  transform: rotate(-90deg);
+  width: 140px; height: 140px;
+}
+
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 10; }
+.ring-fill {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 376;
+  stroke-dashoffset: 376;
+  transition: stroke-dashoffset 1.5s ease;
+}
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-pct {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--amber);
+  line-height: 1;
+}
+
+.ring-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--steel);
+  letter-spacing: 1px;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* SPACER */
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.mb-16 { margin-bottom: 16px; }
+
+/* FULL PANEL */
+.full-panel {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.full-panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.full-panel-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--white);
+  letter-spacing: 0.5px;
+}
+
+.full-panel-body { padding: 16px; }
+
+/* TAG CHIP */
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  padding: 3px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: var(--steel);
+  letter-spacing: 0.5px;
+}
+
+/* TWO COL LAYOUT */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 800px) { .two-col { grid-template-columns: 1fr 1fr; } }
+
+/* Q AND A */
+.qa-item {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.qa-item:last-child { border-bottom: none; }
+
+.qa-q {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.qa-a {
+  font-size: 0.85rem;
+  color: var(--steel);
+  line-height: 1.6;
+}
+
+/* CHECKLIST */
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(26,58,92,0.5);
+  font-size: 0.85rem;
+}
+
+.check-item:last-child { border-bottom: none; }
+
+.check-mark {
+  flex-shrink: 0;
+  width: 18px; height: 18px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  margin-top: 1px;
+}
+
+.check-mark.done { background: var(--green); border-color: var(--green); color: var(--navy); }
+.check-mark.warn { background: rgba(245,158,11,0.2); border-color: var(--amber); color: var(--amber); }
+.check-mark.fail { background: rgba(239,68,68,0.2); border-color: var(--red); color: var(--red); }
+
+.check-text { flex: 1; color: var(--steel); line-height: 1.4; }
+.check-text strong { color: var(--white); display: block; margin-bottom: 2px; }
+
+/* BAR CHART */
+.bar-chart { display: flex; flex-direction: column; gap: 8px; }
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-row-label {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--steel);
+  width: 110px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.bar-fill-wrap {
+  flex: 1;
+  height: 20px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-fill-inner {
+  height: 100%;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--navy);
+  font-weight: 700;
+  transition: width 1.2s ease;
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <div class="brand">
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="brand-mark"></div>
+    <div class="brand-text">
+      <span class="brand-name">AMS-NOSA</span>
+      <span class="brand-sub">AGENTS MANAGEMENT SYSTEM / NATIONAL OPERATING SYSTEM AFRICA</span>
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <span class="system-clock" id="sysClock"></span>
+    <div class="status-dot" title="System Online"></div>
+    <span class="readiness-badge" id="globalReadiness">RDX 68%</span>
+  </div>
+</header>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-section-label">Command</div>
+  <div class="nav-item active" data-module="overview">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></div>
+    Overview
+    <span class="nav-badge">LIVE</span>
+  </div>
+  <div class="nav-item" data-module="intelligence">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+    Decision Core
+    <span class="nav-badge">AI</span>
+  </div>
+
+  <div class="sidebar-section-label">Science</div>
+  <div class="nav-item" data-module="science">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M7 2v2H5v2h2l3 6H4v4a4 4 0 0 0 8 0h4a4 4 0 0 0 8 0v-4h-6l3-6h2V4h-2V2h-2v2h-4V2z"/></svg></div>
+    Science Engine
+  </div>
+
+  <div class="sidebar-section-label">Finance</div>
+  <div class="nav-item" data-module="finance">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
+    Finance Engine
+  </div>
+  <div class="nav-item" data-module="transparency">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div>
+    Transparency
+  </div>
+
+  <div class="sidebar-section-label">Governance</div>
+  <div class="nav-item" data-module="compliance">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+    Compliance
+  </div>
+  <div class="nav-item" data-module="execution">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+    Execution Twin
+  </div>
+
+  <div class="sidebar-section-label">People</div>
+  <div class="nav-item" data-module="workforce">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+    Workforce
+  </div>
+  <div class="nav-item" data-module="trust">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+    Public Trust
+  </div>
+
+  <div class="sidebar-section-label">Scale</div>
+  <div class="nav-item" data-module="demand">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg></div>
+    Demand Engine
+  </div>
+  <div class="nav-item" data-module="regional">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+    Regional Hub
+  </div>
+
+  <div class="sidebar-footer">
+    <p>AMS-NOSA v1.0.0<br>Rwanda Primary Deployment<br>Offline Mode Active</p>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="mainContent">
+
+  <!-- ============================================================
+       MODULE: OVERVIEW
+       ============================================================ -->
+  <section class="module-page active" id="mod-overview">
+    <div class="page-header">
+      <div class="page-title">National Nuclear Program Overview</div>
+      <div class="page-subtitle">RWANDA / PRIMARY DEPLOYMENT / REAL TIME STATUS</div>
+      <p class="page-desc">Unified command interface for Rwanda's nuclear energy development program. All module outputs are integrated into a single national readiness assessment.</p>
+    </div>
+
+    <!-- READINESS RING + KEY METRICS -->
+    <div class="card-grid">
+      <div class="panel-card" style="grid-column: 1;">
+        <div class="readiness-ring-wrap">
+          <div class="readiness-ring">
+            <svg viewBox="0 0 140 140">
+              <circle class="ring-bg" cx="70" cy="70" r="60"/>
+              <circle class="ring-fill" id="mainRingFill" cx="70" cy="70" r="60"/>
+            </svg>
+            <div class="ring-center">
+              <span class="ring-pct" id="mainRingPct">68%</span>
+              <span class="ring-label">READINESS</span>
+            </div>
+          </div>
+          <div style="margin-top:12px; text-align:center;">
+            <div class="card-label">Program Readiness Index</div>
+            <div style="font-size:0.8rem; color:var(--steel); max-width:160px; margin:0 auto; line-height:1.5;">Rwanda Nuclear Energy Deployment</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card green-accent">
+        <div class="card-label">Target Capacity</div>
+        <div class="card-value green">1,200</div>
+        <div class="card-unit">Megawatts Electric</div>
+        <div class="card-trend up">SMR Fleet Deployment 2033</div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-label">Total Program Budget</div>
+        <div class="card-value amber">6.8B</div>
+        <div class="card-unit">USD Estimated Capital</div>
+        <div class="card-trend neutral">Blended Finance Model</div>
+      </div>
+
+      <div class="panel-card blue-accent">
+        <div class="card-label">Licensing Progress</div>
+        <div class="card-value blue">44%</div>
+        <div class="card-unit">Regulatory Compliance</div>
+        <div class="card-trend neutral">IAEA Milestone 2 Ongoing</div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-label">Workforce Readiness</div>
+        <div class="card-value">52%</div>
+        <div class="card-unit">Skilled Staff Available</div>
+        <div class="card-trend up">Training Programs Active</div>
+      </div>
+
+      <div class="panel-card red-accent">
+        <div class="card-label">Key Blockers</div>
+        <div class="card-value red">3</div>
+        <div class="card-unit">Critical Issues Identified</div>
+        <div class="card-trend down">Regulatory / Finance / Site</div>
+      </div>
+    </div>
+
+    <!-- MODULE STATUS -->
+    <div class="section-title">Module Status</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Science and Simulation</strong><span>85%</span></div>
+          <div class="progress-track"><div class="progress-fill green" style="width:85%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Finance and Bankability</strong><span>62%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:62%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Regulatory Compliance</strong><span>44%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:44%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Execution Readiness</strong><span>58%</span></div>
+          <div class="progress-track"><div class="progress-fill blue" style="width:58%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Workforce Capacity</strong><span>52%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:52%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Public Trust Index</strong><span>71%</span></div>
+          <div class="progress-track"><div class="progress-fill green" style="width:71%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Demand Anchoring</strong><span>76%</span></div>
+          <div class="progress-track"><div class="progress-fill blue" style="width:76%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Regional Integration</strong><span>39%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:39%; background:var(--red)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDED ACTIONS -->
+    <div class="section-title">Recommended Actions</div>
+    <div class="alert alert-amber">
+      <span class="alert-icon">PRIORITY</span>
+      <div>Accelerate IAEA Milestone 2 completion. Regulatory gap is the primary risk to financing close. Estimated 14 months to resolve with institutional strengthening support.</div>
+    </div>
+    <div class="alert alert-blue">
+      <span class="alert-icon">ACTION</span>
+      <div>Initiate anchor industrial off-taker agreements with mining and manufacturing sectors to improve bankability score from current 62 to minimum threshold of 75.</div>
+    </div>
+    <div class="alert alert-green">
+      <span class="alert-icon">STRONG</span>
+      <div>Public trust indicators are above target. Maintain community engagement program and continue transparent reporting cadence through all implementation phases.</div>
+    </div>
+
+    <!-- PROGRAM TIMELINE SNAPSHOT -->
+    <div class="section-title">Program Timeline</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done"></div>
+            <div class="timeline-date">2022 2023</div>
+            <div class="timeline-name">Feasibility and Policy Framework</div>
+            <div class="timeline-detail">National energy policy enacted. IAEA peer review completed. Site screening initiated.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot active"></div>
+            <div class="timeline-date">2024 2026</div>
+            <div class="timeline-name">Regulatory and Financing Structure</div>
+            <div class="timeline-detail">Regulatory body strengthening. Financing architecture design. EIA and environmental baseline studies in progress.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot pending"></div>
+            <div class="timeline-date">2027 2029</div>
+            <div class="timeline-name">Contract Award and Construction Launch</div>
+            <div class="timeline-detail">Technology vendor selection. Financial close. Ground breaking and civil construction commencement.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot pending"></div>
+            <div class="timeline-date">2030 2033</div>
+            <div class="timeline-name">Commissioning and Commercial Operation</div>
+            <div class="timeline-detail">Grid integration. First power generation. Full commercial operation at 1,200 MWe capacity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: DECISION INTELLIGENCE
+       ============================================================ -->
+  <section class="module-page" id="mod-intelligence">
+    <div class="page-header">
+      <div class="page-title">Decision Intelligence Core</div>
+      <div class="page-subtitle">INTEGRATED AI READINESS ASSESSMENT ENGINE</div>
+      <p class="page-desc">The central intelligence layer that integrates all module outputs and generates a unified program readiness index with actionable recommendations.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card">
+        <div class="card-label">Overall Readiness Index</div>
+        <div class="card-value amber">68.2</div>
+        <div class="card-unit">Out of 100 / Composite Score</div>
+      </div>
+      <div class="panel-card green-accent">
+        <div class="card-label">Investor Confidence</div>
+        <div class="card-value green">61.4</div>
+        <div class="card-unit">Bankability Score</div>
+      </div>
+      <div class="panel-card red-accent">
+        <div class="card-label">Critical Blockers</div>
+        <div class="card-value red">3</div>
+        <div class="card-unit">Require Immediate Resolution</div>
+      </div>
+    </div>
+
+    <div class="section-title">AI Assessment Narrative</div>
+    <div class="full-panel">
+      <div class="full-panel-header">
+        <span class="full-panel-title">Program Status Analysis / Rwanda Nuclear Program</span>
+        <span class="tag tag-amber">GENERATED</span>
+      </div>
+      <div class="full-panel-body" id="aiNarrative">
+        <p style="font-size:0.88rem; color:var(--steel); line-height:1.7; margin-bottom:12px;">
+          The Rwanda nuclear energy program is progressing at an overall readiness index of 68.2 percent. The program demonstrates strong foundations in public trust and industrial demand anchoring, which are critical for long term viability.
+        </p>
+        <p style="font-size:0.88rem; color:var(--steel); line-height:1.7; margin-bottom:12px;">
+          The primary constraint is regulatory readiness at 44 percent. IAEA Milestone 2 completion is the critical path item. Without regulatory advancement, financing close cannot be achieved and contract award timelines will shift beyond 2027.
+        </p>
+        <p style="font-size:0.88rem; color:var(--steel); line-height:1.7;">
+          Recommended intervention priority: institutional strengthening of the regulatory body, followed by completion of the anchor off-taker framework with industrial demand partners, and resolution of the site selection environmental clearance for the two candidate locations.
+        </p>
+        <div class="btn-row mt-12">
+          <button class="btn btn-primary" onclick="regenerateNarrative()">Regenerate Assessment</button>
+          <button class="btn btn-outline">Export Report</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Sensitivity Analysis</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="bar-row-label">Regulatory Speed</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:82%; background:var(--amber);">HIGH</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Finance Structure</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:71%; background:var(--blue-accent);">HIGH</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Workforce Supply</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:55%; background:var(--green);">MED</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Industrial Demand</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:48%; background:var(--green);">MED</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Public Acceptance</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:30%; background:var(--border-bright);">LOW</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Regional Coord</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:24%; background:var(--border-bright);">LOW</div></div>
+          </div>
+        </div>
+        <div style="font-family:var(--font-mono); font-size:0.6rem; color:var(--white-dim); margin-top:10px;">IMPACT ON OVERALL READINESS INDEX / HIGHER BAR MEANS LARGER EFFECT IF IMPROVED</div>
+      </div>
+    </div>
+
+    <div class="section-title">Decision Log</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0;">
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">DEC-2024-041</span>
+            <span class="ledger-desc">Approved Westinghouse AP300 as primary SMR technology candidate</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-status tag tag-green">RECORDED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">DEC-2024-038</span>
+            <span class="ledger-desc">Blended finance structure adopted with 40% DFI participation</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-status tag tag-green">RECORDED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">DEC-2025-002</span>
+            <span class="ledger-desc">Site B Nyabarongo selected as primary candidate pending EIA</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-status tag tag-amber">PENDING</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">DEC-2025-007</span>
+            <span class="ledger-desc">Regional grid export framework with Tanzania and Uganda deferred</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-status tag tag-red">DEFERRED</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: SCIENCE ENGINE
+       ============================================================ -->
+  <section class="module-page" id="mod-science">
+    <div class="page-header">
+      <div class="page-title">Nuclear Science and Simulation Engine</div>
+      <div class="page-subtitle">REACTOR CONFIGURATION / ENERGY OUTPUT / SAFETY MODELING</div>
+      <p class="page-desc">Configure reactor parameters and simulate energy production, infrastructure requirements, and safety scenarios for Rwanda's deployment context.</p>
+    </div>
+
+    <div class="section-title">Reactor Configuration</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Reactor Technology</label>
+        <select class="form-select" id="reactorType" onchange="updateScienceOutputs()">
+          <option value="ap300">Westinghouse AP300 (300 MWe)</option>
+          <option value="bwrx300">GE Hitachi BWRX-300 (300 MWe)</option>
+          <option value="nuscale">NuScale VOYGR (77 MWe per module)</option>
+          <option value="kairos">Kairos Power KP-FHR (140 MWe)</option>
+          <option value="terrestrial">Terrestrial Energy IMSR (195 MWe)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of Units</label>
+        <select class="form-select" id="reactorUnits" onchange="updateScienceOutputs()">
+          <option value="1">1 Unit</option>
+          <option value="2">2 Units</option>
+          <option value="3">3 Units</option>
+          <option value="4" selected>4 Units</option>
+          <option value="6">6 Units</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cooling System</label>
+        <select class="form-select" id="coolingType">
+          <option value="water">Light Water Cooling</option>
+          <option value="air">Air Cooled (Dry)</option>
+          <option value="hybrid">Hybrid Water and Air</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Capacity Factor (%)</label>
+        <input type="range" min="70" max="95" value="90" id="capFactor" oninput="updateScienceOutputs(); document.getElementById('capFactorVal').textContent=this.value+'%'">
+        <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--amber);" id="capFactorVal">90%</div>
+      </div>
+    </div>
+
+    <!-- OUTPUTS -->
+    <div class="card-grid" id="scienceOutputs">
+      <div class="panel-card green-accent">
+        <div class="card-label">Total Installed Capacity</div>
+        <div class="card-value green" id="totalCapacity">1,200</div>
+        <div class="card-unit">Megawatts Electric</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Annual Energy Output</div>
+        <div class="card-value amber" id="annualOutput">9,461</div>
+        <div class="card-unit">Gigawatt Hours per Year</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Land Requirement</div>
+        <div class="card-value blue" id="landReq">18</div>
+        <div class="card-unit">Hectares Exclusion Zone</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Water Consumption</div>
+        <div class="card-value" id="waterReq">2.4</div>
+        <div class="card-unit">Million Litres per Day</div>
+      </div>
+      <div class="panel-card green-accent">
+        <div class="card-label">Carbon Avoidance</div>
+        <div class="card-value green">6.2M</div>
+        <div class="card-unit">Tonnes CO2 Annually</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Fuel Cycle (UF6)</div>
+        <div class="card-value">18</div>
+        <div class="card-unit">Month Refueling Interval</div>
+      </div>
+    </div>
+
+    <!-- ENERGY CHART -->
+    <div class="chart-container">
+      <div class="chart-title">SIMULATED HOURLY ENERGY OUTPUT VS NATIONAL DEMAND / MEGAWATTS</div>
+      <canvas id="energyChart" height="200"></canvas>
+    </div>
+
+    <!-- SAFETY SCENARIOS -->
+    <div class="section-title">Safety and Failure Scenarios</div>
+    <div class="card-grid-2">
+      <div class="full-panel">
+        <div class="full-panel-header">
+          <span class="full-panel-title">Passive Safety Systems</span>
+          <span class="tag tag-green">VERIFIED</span>
+        </div>
+        <div class="full-panel-body">
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>Emergency Core Cooling</strong>Passive gravity-driven ECCS with 72 hour no-power operation</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>Containment Integrity</strong>Double steel containment vessel with steel-plate concrete composite wall</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>Seismic Design</strong>Design basis earthquake 0.3g with safe shutdown capability</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark warn">!</div>
+            <div class="check-text"><strong>External Hazard Review</strong>Site specific flood and drought analysis pending hydrological study completion</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="full-panel">
+        <div class="full-panel-header">
+          <span class="full-panel-title">Waste Lifecycle</span>
+          <span class="tag tag-amber">PLANNED</span>
+        </div>
+        <div class="full-panel-body">
+          <div class="progress-wrap">
+            <div class="progress-label"><strong>Low Level Waste</strong><span>On-site storage</span></div>
+            <div class="progress-track"><div class="progress-fill green" style="width:90%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><strong>Intermediate Level</strong><span>Regional facility</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><strong>High Level Waste</strong><span>Take-back agreement</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:40%; background:var(--red)"></div></div>
+          </div>
+          <div style="font-size:0.78rem; color:var(--steel); margin-top:8px; line-height:1.5;">Spent fuel take-back arrangement with fuel supplier pending contract finalization. Interim dry cask storage designed for 60 year duration.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: FINANCE ENGINE
+       ============================================================ -->
+  <section class="module-page" id="mod-finance">
+    <div class="page-header">
+      <div class="page-title">Financing and Bankability Engine</div>
+      <div class="page-subtitle">CAPITAL STRUCTURE / RISK ALLOCATION / INVESTMENT READINESS</div>
+      <p class="page-desc">Transform nuclear deployment concepts into investment-ready project finance structures. Model capital stacks, risk allocation, and funding gaps.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Bankability Score</div>
+        <div class="card-value green" id="bankScore">62</div>
+        <div class="card-unit">Threshold is 75 for FID</div>
+        <div class="card-trend down">Below threshold by 13 points</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Investor Confidence Index</div>
+        <div class="card-value amber">61.4</div>
+        <div class="card-unit">Composite score</div>
+      </div>
+      <div class="panel-card red-accent">
+        <div class="card-label">Funding Gap</div>
+        <div class="card-value red">1.2B</div>
+        <div class="card-unit">USD Unallocated</div>
+        <div class="card-trend down">Requires concessional instruments</div>
+      </div>
+    </div>
+
+    <!-- FUNDING STACK BUILDER -->
+    <div class="section-title">Funding Structure Builder</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Government Equity (%)</label>
+        <input type="range" min="0" max="40" value="20" id="govEquity" oninput="updateFinance()">
+        <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--amber);" id="govEquityVal">20%</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">DFI / Multilateral (%)</label>
+        <input type="range" min="0" max="50" value="35" id="dfiShare" oninput="updateFinance()">
+        <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--blue-accent);" id="dfiShareVal">35%</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Private Debt (%)</label>
+        <input type="range" min="0" max="60" value="30" id="privDebt" oninput="updateFinance()">
+        <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--green);" id="privDebtVal">30%</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Export Credit Agencies (%)</label>
+        <input type="range" min="0" max="30" value="15" id="ecaShare" oninput="updateFinance()">
+        <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--steel);" id="ecaShareVal">15%</div>
+      </div>
+    </div>
+
+    <div class="card-grid-2 mb-16">
+      <div class="panel-card">
+        <div class="card-label">Total Allocated</div>
+        <div class="card-value amber" id="totalAllocated">100%</div>
+        <div class="card-unit">of USD 6.8 Billion</div>
+      </div>
+      <div class="panel-card green-accent">
+        <div class="card-label">DSCR Estimate</div>
+        <div class="card-value green">1.42x</div>
+        <div class="card-unit">Debt Service Coverage Ratio</div>
+      </div>
+    </div>
+
+    <!-- CAPITAL COST TABLE -->
+    <div class="section-title">Capital Cost Breakdown</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Cost (USD M)</th>
+              <th>Share</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Nuclear Island (4 units)</td><td>3,200</td><td>47%</td><td><span class="tag tag-amber">Estimated</span></td></tr>
+            <tr><td class="highlight">Turbine and Balance of Plant</td><td>840</td><td>12%</td><td><span class="tag tag-amber">Estimated</span></td></tr>
+            <tr><td class="highlight">Civil Works and Site Prep</td><td>680</td><td>10%</td><td><span class="tag tag-amber">Estimated</span></td></tr>
+            <tr><td class="highlight">Grid Integration</td><td>420</td><td>6%</td><td><span class="tag tag-amber">Estimated</span></td></tr>
+            <tr><td class="highlight">Owner Costs and PMC</td><td>340</td><td>5%</td><td><span class="tag tag-green">Confirmed</span></td></tr>
+            <tr><td class="highlight">Contingency (15%)</td><td>822</td><td>12%</td><td><span class="tag tag-blue">Reserve</span></td></tr>
+            <tr><td class="highlight">Financing Costs</td><td>498</td><td>7%</td><td><span class="tag tag-amber">Estimated</span></td></tr>
+            <tr><td style="font-weight:700; color:var(--white);">TOTAL</td><td style="color:var(--amber); font-weight:700;">6,800</td><td>100%</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RISK ALLOCATION -->
+    <div class="section-title">Risk Allocation Map</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Risk Category</th>
+              <th>Government</th>
+              <th>Investor</th>
+              <th>Insurer</th>
+              <th>Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Construction Overrun</td><td>20%</td><td>60%</td><td>20%</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+            <tr><td class="highlight">Regulatory Delay</td><td>80%</td><td>10%</td><td>10%</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+            <tr><td class="highlight">Revenue / Offtake</td><td>40%</td><td>50%</td><td>10%</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+            <tr><td class="highlight">Currency Risk</td><td>30%</td><td>40%</td><td>30%</td><td><span class="tag tag-amber">MED</span></td></tr>
+            <tr><td class="highlight">Force Majeure</td><td>30%</td><td>20%</td><td>50%</td><td><span class="tag tag-blue">LOW</span></td></tr>
+            <tr><td class="highlight">Nuclear Liability</td><td>90%</td><td>0%</td><td>10%</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PPA SIMULATION -->
+    <div class="section-title">Power Purchase Agreement Simulation</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">PPA Duration (Years)</label>
+        <select class="form-select" id="ppaDuration">
+          <option value="20">20 Years</option>
+          <option value="25" selected>25 Years</option>
+          <option value="30">30 Years</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Anchor Tariff (USD / kWh)</label>
+        <input type="range" min="0.06" max="0.15" step="0.005" value="0.09" id="ppaPrice" oninput="updatePPA()">
+        <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--green);" id="ppaPriceVal">$0.09 / kWh</div>
+      </div>
+    </div>
+    <div class="card-grid-2">
+      <div class="panel-card green-accent">
+        <div class="card-label">Annual Revenue</div>
+        <div class="card-value green" id="annualRevenue">851.5M</div>
+        <div class="card-unit">USD per Year</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">25 Year Revenue</div>
+        <div class="card-value amber" id="totalRevenue">21.3B</div>
+        <div class="card-unit">USD Total Contract Value</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: COMPLIANCE
+       ============================================================ -->
+  <section class="module-page" id="mod-compliance">
+    <div class="page-header">
+      <div class="page-title">Regulatory and Compliance Engine</div>
+      <div class="page-subtitle">IAEA MILESTONE FRAMEWORK / LICENSING PATHWAY / INSTITUTIONAL READINESS</div>
+      <p class="page-desc">Track Rwanda's regulatory progress against international nuclear standards. Identify compliance gaps and estimate time to licensing.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card">
+        <div class="card-label">Overall Compliance</div>
+        <div class="card-value amber">44%</div>
+        <div class="card-unit">Of IAEA Framework</div>
+      </div>
+      <div class="panel-card red-accent">
+        <div class="card-label">Regulatory Gaps</div>
+        <div class="card-value red">12</div>
+        <div class="card-unit">Issues Identified</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Time to Licensing</div>
+        <div class="card-value blue">38</div>
+        <div class="card-unit">Months Estimated</div>
+      </div>
+    </div>
+
+    <!-- MILESTONE TRACKER -->
+    <div class="section-title">IAEA Milestone Framework</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done"></div>
+            <div class="timeline-date">MILESTONE 1 / COMPLETE</div>
+            <div class="timeline-name">Commitment to Nuclear Power</div>
+            <div class="timeline-detail">National energy policy enacted. Presidential commitment issued. Feasibility study accepted by Cabinet. IAEA INIR mission conducted.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot active"></div>
+            <div class="timeline-date">MILESTONE 2 / IN PROGRESS (44%)</div>
+            <div class="timeline-name">Ready to Invite Bids</div>
+            <div class="timeline-detail">Independent regulatory body operational. Environmental site assessment ongoing. Legal and regulatory framework under development. National nuclear security framework being established.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot pending"></div>
+            <div class="timeline-date">MILESTONE 3 / NOT STARTED</div>
+            <div class="timeline-name">Ready to Commission</div>
+            <div class="timeline-detail">Construction permit issued. Operator organization established. Emergency planning completed. Fuel cycle arrangements confirmed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLIANCE CHECKLIST -->
+    <div class="section-title">Compliance Checklist</div>
+    <div class="full-panel">
+      <div class="full-panel-header">
+        <span class="full-panel-title">Milestone 2 Requirements</span>
+        <span class="tag tag-amber">IN PROGRESS</span>
+      </div>
+      <div class="full-panel-body" style="padding: 12px 16px;">
+        <div class="check-item">
+          <div class="check-mark done">OK</div>
+          <div class="check-text"><strong>Independent Regulatory Body Established</strong>Rwanda Atomic Energy Board operational with defined mandate and budget</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark done">OK</div>
+          <div class="check-text"><strong>National Policy and Strategy</strong>National Nuclear Energy Policy adopted by Cabinet 2022</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark warn">!</div>
+          <div class="check-text"><strong>Legal and Regulatory Framework</strong>Nuclear law draft submitted to parliament. Review timeline estimated 9 months</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark warn">!</div>
+          <div class="check-text"><strong>Site and Environmental Assessment</strong>EIA baseline studies 60 percent complete. Final report pending hydrological survey</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark warn">!</div>
+          <div class="check-text"><strong>Nuclear Security Framework</strong>Physical security regulations drafted. National nuclear security strategy under review by IAEA</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark fail">X</div>
+          <div class="check-text"><strong>Safeguards Additional Protocol</strong>Additional Protocol ratification pending National Assembly vote. Critical path item for international financing</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark fail">X</div>
+          <div class="check-text"><strong>Emergency Preparedness Plan</strong>National emergency response framework for nuclear events not yet drafted</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark fail">X</div>
+          <div class="check-text"><strong>Waste Management Plan</strong>National radioactive waste management policy and strategy not yet finalized</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTITUTIONAL READINESS -->
+    <div class="section-title">Institutional Readiness Score</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Regulatory Body Staffing</strong><span>55%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:55%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Technical Competency</strong><span>40%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:40%; background:var(--red)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Legal Framework</strong><span>60%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>International Agreements</strong><span>70%</span></div>
+          <div class="progress-track"><div class="progress-fill green" style="width:70%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Emergency Planning</strong><span>20%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:20%; background:var(--red)"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: EXECUTION TWIN
+       ============================================================ -->
+  <section class="module-page" id="mod-execution">
+    <div class="page-header">
+      <div class="page-title">Project Execution Digital Twin</div>
+      <div class="page-subtitle">CONSTRUCTION PHASES / SUPPLY CHAIN / SCHEDULE PERFORMANCE</div>
+      <p class="page-desc">Real time simulation of project execution. Monitor construction phases, supply chain performance, and schedule adherence. Detect risks before they become delays.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Schedule Performance Index</div>
+        <div class="card-value green">0.94</div>
+        <div class="card-unit">Target is above 0.90</div>
+        <div class="card-trend neutral">Slight lag in civil works</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Cost Performance Index</div>
+        <div class="card-value amber">0.97</div>
+        <div class="card-unit">Target is above 0.95</div>
+        <div class="card-trend up">Within contingency</div>
+      </div>
+      <div class="panel-card red-accent">
+        <div class="card-label">Open Risk Items</div>
+        <div class="card-value red">7</div>
+        <div class="card-unit">Require Resolution</div>
+        <div class="card-trend down">2 escalated to critical</div>
+      </div>
+    </div>
+
+    <div class="section-title">Construction Phase Tracker</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Phase 1 / Site Preparation</strong><span>100%</span></div>
+          <div class="progress-track"><div class="progress-fill green" style="width:100%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Phase 2 / Civil and Structural Works</strong><span>34%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:34%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Phase 3 / Nuclear Island Installation</strong><span>0%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Phase 4 / Mechanical and Electrical</strong><span>0%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Phase 5 / Commissioning and Testing</strong><span>0%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUPPLY CHAIN -->
+    <div class="section-title">Supply Chain Status</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Supplier</th>
+              <th>Lead Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Reactor Pressure Vessel</td><td>Doosan Enerbility</td><td>48 months</td><td><span class="tag tag-amber">On Order</span></td></tr>
+            <tr><td class="highlight">Steam Generators</td><td>Westinghouse</td><td>36 months</td><td><span class="tag tag-amber">Negotiating</span></td></tr>
+            <tr><td class="highlight">Control Rod Drive Mech</td><td>Westinghouse</td><td>30 months</td><td><span class="tag tag-amber">Negotiating</span></td></tr>
+            <tr><td class="highlight">Turbine Generator</td><td>Siemens Energy</td><td>28 months</td><td><span class="tag tag-blue">Planned</span></td></tr>
+            <tr><td class="highlight">Reactor Coolant Pumps</td><td>KSB / Flowserve</td><td>24 months</td><td><span class="tag tag-blue">Planned</span></td></tr>
+            <tr><td class="highlight">I and C Systems</td><td>Framatome</td><td>36 months</td><td><span class="tag tag-blue">Planned</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RISK REGISTER -->
+    <div class="section-title">Risk Register</div>
+    <div class="alert alert-red">
+      <span class="alert-icon">CRITICAL</span>
+      <div><strong>Regulatory Approval Delay:</strong> Additional Protocol ratification delayed by 6 months will cascade into financial close delay. Corrective action: escalate through diplomatic channels and engage parliament directly.</div>
+    </div>
+    <div class="alert alert-red">
+      <span class="alert-icon">CRITICAL</span>
+      <div><strong>RPV Supplier Capacity:</strong> Doosan Enerbility booked with 12 other orders. Slot confirmation at risk. Corrective action: place early reservation payment immediately and explore secondary supplier qualification.</div>
+    </div>
+    <div class="alert alert-amber">
+      <span class="alert-icon">WATCH</span>
+      <div><strong>Site Access Road:</strong> Civil works contractor reports 8 week delay on access road due to rainy season ground conditions. No critical path impact if recovered by Q3.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: TRANSPARENCY
+       ============================================================ -->
+  <section class="module-page" id="mod-transparency">
+    <div class="page-header">
+      <div class="page-title">Transparency and Accountability Layer</div>
+      <div class="page-subtitle">TRANSACTION LOG / PROCUREMENT TRACKING / MILESTONE LEDGER</div>
+      <p class="page-desc">Every unit of funding is traceable. Every decision is auditable. A blockchain-structured ledger that builds investor and public confidence.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Ledger Entries</div>
+        <div class="card-value green">247</div>
+        <div class="card-unit">Transactions Recorded</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Funds Deployed</div>
+        <div class="card-value amber">142.8M</div>
+        <div class="card-unit">USD Traceable</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Audit Score</div>
+        <div class="card-value blue">98.2%</div>
+        <div class="card-unit">Reconciled and Verified</div>
+      </div>
+    </div>
+
+    <!-- LEDGER -->
+    <div class="section-title">Financial Transaction Ledger</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0;">
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">TXN-2025-0247 / BLOCK 247</span>
+            <span class="ledger-desc">EIA Consultant Contract Payment / Ramboll Environmental</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">USD 2.4M</div>
+            <div class="ledger-status tag tag-green">VERIFIED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">TXN-2025-0246 / BLOCK 246</span>
+            <span class="ledger-desc">IAEA Technical Cooperation Program Disbursement</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">USD 0.8M</div>
+            <div class="ledger-status tag tag-green">VERIFIED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">TXN-2025-0245 / BLOCK 245</span>
+            <span class="ledger-desc">Training Program / African Nuclear Energy Commission Scholarships</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">USD 1.2M</div>
+            <div class="ledger-status tag tag-green">VERIFIED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">TXN-2025-0244 / BLOCK 244</span>
+            <span class="ledger-desc">Site Geotechnical Survey / African Geosciences Consortium</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">USD 3.6M</div>
+            <div class="ledger-status tag tag-amber">PENDING</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">TXN-2025-0243 / BLOCK 243</span>
+            <span class="ledger-desc">Regulatory Capacity Building / World Nuclear University</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">USD 0.6M</div>
+            <div class="ledger-status tag tag-green">VERIFIED</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCUREMENT TRACKER -->
+    <div class="section-title">Procurement Tracker</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Contract</th>
+              <th>Value</th>
+              <th>Method</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Owner Engineering Services</td><td>USD 24M</td><td>Competitive</td><td><span class="tag tag-green">Awarded</span></td></tr>
+            <tr><td class="highlight">Environmental and Social Impact</td><td>USD 6.8M</td><td>Competitive</td><td><span class="tag tag-green">Awarded</span></td></tr>
+            <tr><td class="highlight">Financial Advisor</td><td>USD 4.2M</td><td>Negotiated</td><td><span class="tag tag-green">Awarded</span></td></tr>
+            <tr><td class="highlight">Legal Counsel International</td><td>USD 3.8M</td><td>Competitive</td><td><span class="tag tag-amber">Evaluation</span></td></tr>
+            <tr><td class="highlight">Technology Vendor (EPC)</td><td>USD 5.1B</td><td>Competitive</td><td><span class="tag tag-blue">Not Started</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MILESTONE VERIFICATION -->
+    <div class="section-title">Milestone Verification Log</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0;">
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">MLST-001</span>
+            <span class="ledger-desc">IAEA INIR Phase 1 Mission Completed</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">2023-Q2</div>
+            <div class="ledger-status tag tag-green">VERIFIED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">MLST-002</span>
+            <span class="ledger-desc">Regulatory Body Formally Established by Law</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">2024-Q1</div>
+            <div class="ledger-status tag tag-green">VERIFIED</div>
+          </div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <span class="ledger-id">MLST-003</span>
+            <span class="ledger-desc">EIA Scoping Report Approved</span>
+          </div>
+          <div class="ledger-right">
+            <div class="ledger-amount">2025-Q1</div>
+            <div class="ledger-status tag tag-amber">PENDING</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: PUBLIC TRUST
+       ============================================================ -->
+  <section class="module-page" id="mod-trust">
+    <div class="page-header">
+      <div class="page-title">Public Trust and Communication Interface</div>
+      <div class="page-subtitle">COMMUNITY ENGAGEMENT / PLAIN LANGUAGE / SAFETY ASSURANCE</div>
+      <p class="page-desc">Building and maintaining public trust through transparent communication, community engagement, and honest safety assurance.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Public Support Rate</div>
+        <div class="card-value green">71%</div>
+        <div class="card-unit">National Poll 2024</div>
+        <div class="card-trend up">Up from 58% in 2022</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Community Sessions</div>
+        <div class="card-value amber">48</div>
+        <div class="card-unit">Conducted Nationwide</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Media Sentiment</div>
+        <div class="card-value blue">64%</div>
+        <div class="card-unit">Positive Coverage</div>
+      </div>
+    </div>
+
+    <!-- PUBLIC FAQ -->
+    <div class="section-title">Plain Language Information</div>
+    <div class="full-panel">
+      <div class="full-panel-header">
+        <span class="full-panel-title">Frequently Asked Questions</span>
+      </div>
+      <div class="full-panel-body">
+        <div class="qa-item">
+          <div class="qa-q">What is nuclear energy and how does it work?</div>
+          <div class="qa-a">Nuclear energy is produced by splitting uranium atoms in a controlled process called fission. The heat released is used to produce steam, which drives turbines to generate electricity. No burning of fuel occurs, so there are no air pollution emissions during operation. A small modular reactor the size of a few buildings can power over one million homes continuously.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q">Is nuclear power safe for Rwanda?</div>
+          <div class="qa-a">Modern small modular reactors are designed with passive safety systems that do not require power or human action to cool down in an emergency. Rwanda is selecting technologies with the strongest safety records available. The program will follow all International Atomic Energy Agency safety standards and will be independently regulated by the Rwanda Atomic Energy Board.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q">What happens to the nuclear waste?</div>
+          <div class="qa-a">The volume of waste produced by nuclear energy is very small compared to other fuels. All spent fuel is solid and can be safely stored in sealed containers. Rwanda's program will include a national waste management plan with long-term solutions that are common practice in countries that have operated nuclear power for decades.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q">How will this affect electricity prices for households?</div>
+          <div class="qa-a">Nuclear energy has very high upfront costs but very low and stable operational costs. Over the long term, nuclear power provides predictable electricity prices that are not affected by fuel price fluctuations. The program is designed to reduce Rwanda's dependence on imported fossil fuels and stabilize energy costs for industry and homes.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q">How can communities participate?</div>
+          <div class="qa-a">Public engagement is a formal requirement of the program. Community consultation sessions, public comment periods on environmental studies, and a dedicated information center will be established near any proposed site. All project data, contracts, and financial information will be published on this platform for public review.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RADIATION MONITORING -->
+    <div class="section-title">Radiation Monitoring Simulation</div>
+    <div class="gauge-row">
+      <div class="gauge-item">
+        <div class="gauge-value green">0.08</div>
+        <div class="gauge-label">SITE BOUNDARY mSv/yr</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-value green">0.12</div>
+        <div class="gauge-label">KIGALI NATURAL mSv/yr</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-value amber">2.4</div>
+        <div class="gauge-label">GLOBAL AVERAGE mSv/yr</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-value green">100x</div>
+        <div class="gauge-label">BELOW LIMIT</div>
+      </div>
+    </div>
+    <div class="alert alert-green">
+      <span class="alert-icon">INFO</span>
+      <div>The radiation dose at the boundary of a nuclear plant is typically less than eating one banana. Rwanda's regulatory limit for the public is 1 mSv per year from all nuclear facilities combined. All monitoring data will be published in real time on this platform.</div>
+    </div>
+
+    <!-- COMMUNITY IMPACT -->
+    <div class="section-title">Community Impact Dashboard</div>
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Local Jobs Created</div>
+        <div class="card-value green">3,200</div>
+        <div class="card-unit">Direct and Indirect</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Local Contracts</div>
+        <div class="card-value amber">680M</div>
+        <div class="card-unit">USD Targeted to Rwandan Firms</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Schools Served</div>
+        <div class="card-value blue">850+</div>
+        <div class="card-unit">Via Reliable Electricity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: DEMAND ENGINE
+       ============================================================ -->
+  <section class="module-page" id="mod-demand">
+    <div class="page-header">
+      <div class="page-title">Demand and Industrial Integration Engine</div>
+      <div class="page-subtitle">DEMAND AGGREGATION / OFF-TAKER FRAMEWORK / REVENUE ANCHORING</div>
+      <p class="page-desc">Link nuclear deployment to real economic demand. Aggregate industrial off-takers to anchor project bankability and revenue certainty.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Anchored Demand</div>
+        <div class="card-value green">860</div>
+        <div class="card-unit">Megawatts Committed</div>
+        <div class="card-trend up">72% of capacity covered</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Industrial Off-takers</div>
+        <div class="card-value amber">14</div>
+        <div class="card-unit">Signed Letters of Intent</div>
+      </div>
+      <div class="panel-card red-accent">
+        <div class="card-label">Demand Gap</div>
+        <div class="card-value red">340</div>
+        <div class="card-unit">MW Unanchored</div>
+        <div class="card-trend down">Requires additional recruitment</div>
+      </div>
+    </div>
+
+    <!-- SECTOR BREAKDOWN -->
+    <div class="section-title">Industrial Demand by Sector</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="bar-row-label">Mining and Minerals</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:72%; background:var(--amber);">290 MW</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Data Centers</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:50%; background:var(--blue-accent);">200 MW</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Manufacturing</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:43%; background:var(--green);">170 MW</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Agricultural Processing</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:25%; background:var(--green);">100 MW</div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-row-label">Residential and SME</div>
+            <div class="bar-fill-wrap"><div class="bar-fill-inner" style="width:75%; background:var(--steel);">300 MW</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFF-TAKER TABLE -->
+    <div class="section-title">Off-taker Registry</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Entity</th>
+              <th>Sector</th>
+              <th>Demand (MW)</th>
+              <th>Agreement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Rwanda Energy Group</td><td>Utility</td><td>300</td><td><span class="tag tag-green">PPA Signed</span></td></tr>
+            <tr><td class="highlight">Mining Corp East Africa</td><td>Mining</td><td>120</td><td><span class="tag tag-amber">LOI Signed</span></td></tr>
+            <tr><td class="highlight">DICE Africa Data Centers</td><td>Technology</td><td>100</td><td><span class="tag tag-amber">LOI Signed</span></td></tr>
+            <tr><td class="highlight">Kigali Special Economic Zone</td><td>Manufacturing</td><td>85</td><td><span class="tag tag-amber">LOI Signed</span></td></tr>
+            <tr><td class="highlight">East Africa Breweries</td><td>Processing</td><td>40</td><td><span class="tag tag-blue">MOU Stage</span></td></tr>
+            <tr><td class="highlight">Rwanda Cement Company</td><td>Industry</td><td>35</td><td><span class="tag tag-blue">MOU Stage</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REVENUE PROJECTION -->
+    <div class="section-title">Revenue Projection Scenarios</div>
+    <div class="card-grid">
+      <div class="panel-card">
+        <div class="card-label">Conservative (USD 0.07 kWh)</div>
+        <div class="card-value">663M</div>
+        <div class="card-unit">USD Annual Revenue</div>
+      </div>
+      <div class="panel-card green-accent">
+        <div class="card-label">Base Case (USD 0.09 kWh)</div>
+        <div class="card-value green">851M</div>
+        <div class="card-unit">USD Annual Revenue</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Optimistic (USD 0.12 kWh)</div>
+        <div class="card-value blue">1.14B</div>
+        <div class="card-unit">USD Annual Revenue</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: REGIONAL HUB
+       ============================================================ -->
+  <section class="module-page" id="mod-regional">
+    <div class="page-header">
+      <div class="page-title">Regional Cooperation Hub</div>
+      <div class="page-subtitle">EAC NUCLEAR COOPERATION / CROSS-BORDER ENERGY / REPLICATION MODEL</div>
+      <p class="page-desc">Simulate multi-country nuclear cooperation across the East African Community and beyond. Model cost reductions from aggregation and shared infrastructure.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card green-accent">
+        <div class="card-label">Regional Partner States</div>
+        <div class="card-value green">6</div>
+        <div class="card-unit">EAC Members Engaged</div>
+      </div>
+      <div class="panel-card">
+        <div class="card-label">Cost Reduction via Aggregation</div>
+        <div class="card-value amber">18%</div>
+        <div class="card-unit">Per Unit if 4+ Countries</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Regional Potential</div>
+        <div class="card-value blue">8,400</div>
+        <div class="card-unit">MWe Total by 2040</div>
+      </div>
+    </div>
+
+    <!-- COUNTRY STATUS -->
+    <div class="section-title">Regional Partner Status</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>IAEA Milestone</th>
+              <th>Capacity Target</th>
+              <th>Readiness</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Rwanda</td><td>Milestone 2</td><td>1,200 MWe</td><td>68%</td><td><span class="tag tag-amber">Lead State</span></td></tr>
+            <tr><td class="highlight">Kenya</td><td>Milestone 2</td><td>1,000 MWe</td><td>62%</td><td><span class="tag tag-amber">Partner</span></td></tr>
+            <tr><td class="highlight">Uganda</td><td>Milestone 1</td><td>800 MWe</td><td>41%</td><td><span class="tag tag-blue">Observer</span></td></tr>
+            <tr><td class="highlight">Tanzania</td><td>Milestone 1</td><td>600 MWe</td><td>35%</td><td><span class="tag tag-blue">Observer</span></td></tr>
+            <tr><td class="highlight">Ethiopia</td><td>Milestone 2</td><td>1,200 MWe</td><td>55%</td><td><span class="tag tag-amber">Partner</span></td></tr>
+            <tr><td class="highlight">Ghana</td><td>Milestone 2</td><td>1,000 MWe</td><td>71%</td><td><span class="tag tag-green">Advanced</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REGULATORY HARMONIZATION -->
+    <div class="section-title">Regulatory Harmonization Progress</div>
+    <div class="full-panel">
+      <div class="full-panel-body">
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Shared Safety Framework</strong><span>55%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:55%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Mutual Recognition Agreement</strong><span>30%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:30%; background:var(--red)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Joint Emergency Planning</strong><span>20%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:20%; background:var(--red)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><strong>Cross-Border Grid Protocols</strong><span>45%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:45%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCALING MODEL -->
+    <div class="section-title">Africa Replication Model</div>
+    <div class="alert alert-blue">
+      <span class="alert-icon">MODEL</span>
+      <div>The Rwanda approach establishes the template. If 4 EAC countries deploy identical SMR technology at similar scale, combined procurement reduces per-unit capital cost by an estimated 18 percent. A shared regional regulatory body reduces time to licensing by an estimated 24 months per subsequent country. Total continental deployment potential by 2040 is 40,000 MWe across 12 to 15 nations, unlocking the energy foundation for African industrialization.</div>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card">
+        <div class="card-label">Africa Total Potential</div>
+        <div class="card-value amber">40,000</div>
+        <div class="card-unit">MWe by 2040 Continent Wide</div>
+      </div>
+      <div class="panel-card green-accent">
+        <div class="card-label">Jobs Continent Wide</div>
+        <div class="card-value green">200K</div>
+        <div class="card-unit">Direct Employment</div>
+      </div>
+      <div class="panel-card blue-accent">
+        <div class="card-label">Carbon Avoided</div>
+        <div class="card-value blue">210M</div>
+        <div class="card-unit">Tonnes CO2 Annually</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODULE: WORKFORCE
+       ============================================================ -->
+  <section class="module-page" id="mod-workforce">
+    <div class="page-header">
+      <div class="page-title">Workforce and Capacity Development</div>
+      <div class="page-subtitle">SKILLS MAPPING / TRAINING PATHWAYS / INSTITUTIONAL READINESS</div>
+      <p class="page-desc">Map, track, and develop the human capital required to plan, build, operate, and regulate Rwanda's nuclear energy program.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="panel-card">
+        <div class="card-label">Total Workforce Needed</div>
+        <div class="card-value amber">6,200</div>
+        <div class="card-unit">By 2033 Full Operation</div>
+      </div>
+      <div class="panel-card green-accent">
+        <div class="card-label">Currently Trained</div>
+        <div class="card-value green">1,840</div>
+        <div class="card-unit">Qualified or In Training</div>
+      </div>
+      <div class="panel-card red-accent">
+        <div class="card-label">Workforce Gap</div>
+        <div class="card-value red">4,360</div>
+        <div class="card-unit">Requires Development</div>
+      </div>
+    </div>
+
+    <!-- SKILLS MAP -->
+    <div class="section-title">Skills Requirements Map</div>
+    <div class="full-panel">
+      <div class="full-panel-body" style="padding:0; overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Role Category</th>
+              <th>Required</th>
+              <th>Available</th>
+              <th>Gap</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="highlight">Nuclear Engineers</td><td>480</td><td>62</td><td>418</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+            <tr><td class="highlight">Reactor Operators</td><td>320</td><td>18</td><td>302</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+            <tr><td class="highlight">Radiation Safety Officers</td><td>240</td><td>45</td><td>195</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+            <tr><td class="highlight">Regulatory Inspectors</td><td>80</td><td>28</td><td>52</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+            <tr><td class="highlight">Civil and Structural Engineers</td><td>600</td><td>380</td><td>220</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+            <tr><td class="highlight">Electrical Engineers</td><td>480</td><td>290</td><td>190</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+            <tr><td class="highlight">Project Managers</td><td>160</td><td>80</td><td>80</td><td><span class="tag tag-amber">MED</span></td></tr>
+            <tr><td class="highlight">IT and Control Systems</td><td>280</td><td>140</td><td>140</td><td><span class="tag tag-amber">MED</span></td></tr>
+            <tr><td class="highlight">Administrative and Support</td><td>3,560</td><td>797</td><td>2,763</td><td><span class="tag tag-blue">LOW</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TRAINING PATHWAYS -->
+    <div class="section-title">Training Pathways</div>
+    <div class="card-grid-2">
+      <div class="full-panel">
+        <div class="full-panel-header">
+          <span class="full-panel-title">Domestic Programs</span>
+          <span class="tag tag-green">ACTIVE</span>
+        </div>
+        <div class="full-panel-body">
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>UR Nuclear Engineering Department</strong>University of Rwanda BSc and MSc programs launched 2023. 120 students enrolled.</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>TVET Nuclear Technology Track</strong>Technical training for technicians and operators at 3 TVET centers. 280 enrolled.</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark warn">!</div>
+            <div class="check-text"><strong>PhD Research Program</strong>Doctoral program under development. Partner university agreements pending signature.</div>
+          </div>
+        </div>
+      </div>
+      <div class="full-panel">
+        <div class="full-panel-header">
+          <span class="full-panel-title">International Programs</span>
+          <span class="tag tag-amber">PARTIAL</span>
+        </div>
+        <div class="full-panel-body">
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>IAEA Fellowships</strong>42 Rwandan professionals placed in IAEA fellowship programs since 2020.</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark done">OK</div>
+            <div class="check-text"><strong>Russia Rosatom Training Center</strong>20 engineers placed for 3-year operational training program in Russia.</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark warn">!</div>
+            <div class="check-text"><strong>South Korea KEPCO Partnership</strong>MOA signed. Joint training program design in progress. Launch expected 2026.</div>
+          </div>
+          <div class="check-item">
+            <div class="check-mark fail">X</div>
+            <div class="check-text"><strong>USA 123 Agreement Training</strong>Pending ratification of 123 Agreement for nuclear cooperation with the United States.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKFORCE GROWTH SIMULATION -->
+    <div class="section-title">Workforce Growth Projection</div>
+    <div class="chart-container">
+      <div class="chart-title">WORKFORCE DEVELOPMENT TRAJECTORY 2024 TO 2035</div>
+      <canvas id="workforceChart" height="180"></canvas>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ============================================================
+// NAVIGATION
+// ============================================================
+const navItems = document.querySelectorAll('.nav-item');
+const pages = document.querySelectorAll('.module-page');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const menuToggle = document.getElementById('menuToggle');
+
+function navigateTo(moduleId) {
+  navItems.forEach(n => n.classList.remove('active'));
+  pages.forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-module="' + moduleId + '"]').classList.add('active');
+  const page = document.getElementById('mod-' + moduleId);
+  if (page) page.classList.add('active');
+  closeSidebar();
+  window.scrollTo(0, 0);
+  if (moduleId === 'overview') animateRing(68);
+  if (moduleId === 'science') { setTimeout(drawEnergyChart, 200); }
+  if (moduleId === 'workforce') { setTimeout(drawWorkforceChart, 200); }
+}
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.module));
+});
+
+menuToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+}
+
+overlay.addEventListener('click', closeSidebar);
+
+// ============================================================
+// CLOCK
+// ============================================================
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getUTCHours()).padStart(2, '0');
+  const m = String(now.getUTCMinutes()).padStart(2, '0');
+  const s = String(now.getUTCSeconds()).padStart(2, '0');
+  document.getElementById('sysClock').textContent = 'UTC ' + h + ':' + m + ':' + s;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ============================================================
+// READINESS RING ANIMATION
+// ============================================================
+function animateRing(pct) {
+  const circ = 376;
+  const offset = circ - (circ * pct / 100);
+  const fill = document.getElementById('mainRingFill');
+  if (fill) {
+    setTimeout(() => { fill.style.strokeDashoffset = offset; }, 300);
+  }
+}
+animateRing(68);
+
+// ============================================================
+// SCIENCE ENGINE
+// ============================================================
+const reactorData = {
+  ap300:       { mw: 300, land: 5, water: 0.6 },
+  bwrx300:     { mw: 300, land: 4, water: 0.5 },
+  nuscale:     { mw: 77,  land: 3, water: 0.3 },
+  kairos:      { mw: 140, land: 4, water: 0.4 },
+  terrestrial: { mw: 195, land: 4, water: 0.45 }
+};
+
+function updateScienceOutputs() {
+  const rType = document.getElementById('reactorType').value;
+  const units = parseInt(document.getElementById('reactorUnits').value);
+  const capF  = parseInt(document.getElementById('capFactor').value) / 100;
+  const rd    = reactorData[rType];
+  const totalMW = rd.mw * units;
+  const annualGWh = Math.round(totalMW * 8760 * capF / 1000);
+  const land = (rd.land * units).toFixed(0);
+  const water = (rd.water * units).toFixed(1);
+  document.getElementById('totalCapacity').textContent = totalMW.toLocaleString();
+  document.getElementById('annualOutput').textContent  = annualGWh.toLocaleString();
+  document.getElementById('landReq').textContent       = land;
+  document.getElementById('waterReq').textContent      = water;
+}
+
+// ============================================================
+// ENERGY CHART
+// ============================================================
+function drawEnergyChart() {
+  const canvas = document.getElementById('energyChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 600;
+  canvas.height = 200 * window.devicePixelRatio || 200;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W = canvas.offsetWidth || 600;
+  const H = 200;
+  const pts = 24;
+  const demand = [];
+  const supply = [];
+  for (let i = 0; i < pts; i++) {
+    const base = 800 + Math.sin(i * 0.4) * 200 + (Math.random() * 80);
+    demand.push(base);
+    supply.push(1100 + Math.random() * 80);
+  }
+  ctx.clearRect(0, 0, W, H);
+  const pad = { top: 10, right: 10, bottom: 30, left: 50 };
+  const iW = W - pad.left - pad.right;
+  const iH = H - pad.top - pad.bottom;
+  const maxV = 1500;
+  function xPos(i) { return pad.left + (i / (pts - 1)) * iW; }
+  function yPos(v) { return pad.top + iH - (v / maxV) * iH; }
+  // Grid lines
+  ctx.strokeStyle = 'rgba(26,58,92,0.6)';
+  ctx.lineWidth = 1;
+  [0, 300, 600, 900, 1200, 1500].forEach(v => {
+    ctx.beginPath();
+    ctx.moveTo(pad.left, yPos(v));
+    ctx.lineTo(pad.left + iW, yPos(v));
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(148,163,184,0.7)';
+    ctx.font = '10px Share Tech Mono';
+    ctx.fillText(v + ' MW', 2, yPos(v) + 4);
+  });
+  // X axis labels
+  ctx.fillStyle = 'rgba(148,163,184,0.7)';
+  ctx.font = '10px Share Tech Mono';
+  for (let i = 0; i < pts; i += 4) {
+    ctx.fillText(i + ':00', xPos(i) - 10, H - 5);
+  }
+  // Supply line (filled)
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(supply[0]));
+  for (let i = 1; i < pts; i++) ctx.lineTo(xPos(i), yPos(supply[i]));
+  ctx.lineTo(xPos(pts-1), yPos(0));
+  ctx.lineTo(xPos(0), yPos(0));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(16,212,122,0.1)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(supply[0]));
+  for (let i = 1; i < pts; i++) ctx.lineTo(xPos(i), yPos(supply[i]));
+  ctx.strokeStyle = '#10d47a';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Demand line
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(demand[0]));
+  for (let i = 1; i < pts; i++) ctx.lineTo(xPos(i), yPos(demand[i]));
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Legend
+  ctx.fillStyle = '#10d47a';
+  ctx.fillRect(pad.left, H - 14, 10, 3);
+  ctx.fillStyle = 'rgba(148,163,184,0.8)';
+  ctx.font = '10px Share Tech Mono';
+  ctx.fillText('Nuclear Supply', pad.left + 14, H - 11);
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(pad.left + 110, H - 14, 10, 3);
+  ctx.fillStyle = 'rgba(148,163,184,0.8)';
+  ctx.fillText('National Demand', pad.left + 124, H - 11);
+}
+
+// ============================================================
+// WORKFORCE CHART
+// ============================================================
+function drawWorkforceChart() {
+  const canvas = document.getElementById('workforceChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 600;
+  canvas.height = 180 * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W = canvas.offsetWidth || 600;
+  const H = 180;
+  const years = [2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035];
+  const trained = [1840,2100,2500,3000,3600,4200,4700,5100,5500,6000,6200,6400];
+  const target  = [2000,2400,2900,3500,4100,4700,5200,5600,6000,6200,6200,6200];
+  const pad = { top: 10, right: 10, bottom: 30, left: 55 };
+  const iW = W - pad.left - pad.right;
+  const iH = H - pad.top - pad.bottom;
+  const maxV = 7000;
+  ctx.clearRect(0, 0, W, H);
+  function xPos(i) { return pad.left + (i / (years.length - 1)) * iW; }
+  function yPos(v) { return pad.top + iH - (v / maxV) * iH; }
+  ctx.strokeStyle = 'rgba(26,58,92,0.6)';
+  ctx.lineWidth = 1;
+  [0,2000,4000,6000].forEach(v => {
+    ctx.beginPath();
+    ctx.moveTo(pad.left, yPos(v));
+    ctx.lineTo(pad.left + iW, yPos(v));
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(148,163,184,0.7)';
+    ctx.font = '10px Share Tech Mono';
+    ctx.fillText((v/1000).toFixed(0)+'K', 2, yPos(v)+4);
+  });
+  years.forEach((y, i) => {
+    ctx.fillStyle = 'rgba(148,163,184,0.7)';
+    ctx.font = '10px Share Tech Mono';
+    ctx.fillText(String(y).slice(2), xPos(i) - 8, H - 5);
+  });
+  // Target fill
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(target[0]));
+  target.forEach((v, i) => ctx.lineTo(xPos(i), yPos(v)));
+  ctx.lineTo(xPos(years.length-1), yPos(0));
+  ctx.lineTo(xPos(0), yPos(0));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(56,189,248,0.08)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(target[0]));
+  target.forEach((v, i) => ctx.lineTo(xPos(i), yPos(v)));
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Trained fill
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(trained[0]));
+  trained.forEach((v, i) => ctx.lineTo(xPos(i), yPos(v)));
+  ctx.lineTo(xPos(years.length-1), yPos(0));
+  ctx.lineTo(xPos(0), yPos(0));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(245,158,11,0.12)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(trained[0]));
+  trained.forEach((v, i) => ctx.lineTo(xPos(i), yPos(v)));
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(pad.left, H-14, 10, 3);
+  ctx.fillStyle='rgba(148,163,184,0.8)'; ctx.font='10px Share Tech Mono';
+  ctx.fillText('Trained Staff', pad.left+14, H-11);
+  ctx.fillStyle='#38bdf8'; ctx.fillRect(pad.left+100, H-14, 10, 3);
+  ctx.fillStyle='rgba(148,163,184,0.8)';
+  ctx.fillText('Required Target', pad.left+114, H-11);
+}
+
+// ============================================================
+// FINANCE ENGINE
+// ============================================================
+function updateFinance() {
+  const gov = parseInt(document.getElementById('govEquity').value);
+  const dfi = parseInt(document.getElementById('dfiShare').value);
+  const prv = parseInt(document.getElementById('privDebt').value);
+  const eca = parseInt(document.getElementById('ecaShare').value);
+  const total = gov + dfi + prv + eca;
+  document.getElementById('govEquityVal').textContent = gov + '%';
+  document.getElementById('dfiShareVal').textContent  = dfi + '%';
+  document.getElementById('privDebtVal').textContent  = prv + '%';
+  document.getElementById('ecaShareVal').textContent  = eca + '%';
+  document.getElementById('totalAllocated').textContent = total + '%';
+  // Simple bankability heuristic
+  let score = 40;
+  if (dfi > 25) score += 15;
+  if (prv > 20) score += 10;
+  if (eca > 10) score += 8;
+  if (gov >= 15 && gov <= 30) score += 10;
+  if (total > 100) score -= (total - 100) * 0.5;
+  document.getElementById('bankScore').textContent = Math.min(95, Math.round(score));
+}
+
+function updatePPA() {
+  const price = parseFloat(document.getElementById('ppaPrice').value);
+  const annualGWh = 9461;
+  const revenue = (price * annualGWh * 1000000 / 1e6).toFixed(1);
+  const duration = parseInt(document.getElementById('ppaDuration').value);
+  document.getElementById('ppaPriceVal').textContent = '$' + price.toFixed(3) + ' / kWh';
+  document.getElementById('annualRevenue').textContent = revenue + 'M';
+  document.getElementById('totalRevenue').textContent = (revenue * duration / 1000).toFixed(1) + 'B';
+}
+
+// ============================================================
+// DECISION INTELLIGENCE - AI NARRATIVE REGENERATION
+// ============================================================
+const narratives = [
+  `The Rwanda nuclear energy program is progressing at an overall readiness index of 68.2 percent. The program demonstrates strong foundations in public trust and industrial demand anchoring, which are critical for long term viability. The primary constraint is regulatory readiness at 44 percent. IAEA Milestone 2 completion is the critical path item. Without regulatory advancement, financing close cannot be achieved. Recommended intervention: institutional strengthening of the regulatory body, followed by completion of the anchor off-taker framework and resolution of site selection environmental clearance.`,
+  `Assessment update: Program readiness at 68.2 percent reflects meaningful progress since 2022 but two structural gaps remain. First, the Additional Protocol ratification must be treated as a political priority, not a technical one. Second, the anchor industrial demand of 860 MW leaves 340 MW unanchored, which weakens the bankability case. Closing this gap requires active recruitment of 2 to 3 additional large industrial consumers before the financing mandate is issued. Confidence index would improve to 74 with these actions completed.`,
+  `Integrated assessment across 9 program pillars confirms that Rwanda's nuclear program has the strongest public acceptance foundation in sub-Saharan Africa at 71 percent public support. This is a strategic asset that must be maintained through consistent transparency. The technology selection analysis supports the AP300 as the preferred candidate based on regulatory maturity, supply chain availability, and existing international precedent. Execution readiness score of 58 percent reflects the pre-contract phase. Expected to reach 75 percent upon financial close and contract award.`
+];
+let narrativeIndex = 0;
+
+function regenerateNarrative() {
+  narrativeIndex = (narrativeIndex + 1) % narratives.length;
+  const el = document.getElementById('aiNarrative');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.innerHTML = `<p style="font-size:0.88rem; color:var(--steel); line-height:1.7; margin-bottom:12px;">${narratives[narrativeIndex]}</p><div class="btn-row mt-12"><button class="btn btn-primary" onclick="regenerateNarrative()">Regenerate Assessment</button><button class="btn btn-outline">Export Report</button></div>`;
+    el.style.opacity = '1';
+    el.style.transition = 'opacity 0.4s';
+  }, 300);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', () => {
+  animateRing(68);
+  updateScienceOutputs();
+  updateFinance();
+  updatePPA();
+  // Stagger progress bars animation
+  document.querySelectorAll('.progress-fill').forEach((el, i) => {
+    const w = el.style.width;
+    el.style.width = '0';
+    setTimeout(() => { el.style.width = w; }, 200 + i * 80);
+  });
+});
+
+// Redraw charts on resize
+window.addEventListener('resize', () => {
+  const sciPage = document.getElementById('mod-science');
+  const wfPage  = document.getElementById('mod-workforce');
+  if (sciPage && sciPage.classList.contains('active')) drawEnergyChart();
+  if (wfPage  && wfPage.classList.contains('active'))  drawWorkforceChart();
+});
+</script>
+</body>
+</html>
