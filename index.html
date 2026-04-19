@@ -1,0 +1,2489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AMS-NOSA | Agents Management System National Operating System Africa</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&family=Exo+2:ital,wght@0,200;0,400;0,700;0,900;1,200&display=swap');
+
+/* ============================================================
+   DESIGN SYSTEM
+   Aesthetic: Precision Command / Sovereign Infrastructure
+   Fonts: Bebas Neue (hero) + DM Sans (body) + Share Tech Mono (data)
+   Palette: Deep Obsidian, Nuclear Amber, Grid Teal, Oxygen White
+   ============================================================ */
+:root{
+  --obsidian:#04080f;
+  --panel:#080f1c;
+  --panel-2:#0c1526;
+  --panel-3:#101d33;
+  --border:#162540;
+  --border-hi:#1e3a5f;
+  --amber:#f0a500;
+  --amber-soft:rgba(240,165,0,0.12);
+  --teal:#00d4aa;
+  --teal-soft:rgba(0,212,170,0.1);
+  --red:#ff4757;
+  --red-soft:rgba(255,71,87,0.1);
+  --blue:#4da6ff;
+  --blue-soft:rgba(77,166,255,0.1);
+  --white:#eef2f7;
+  --steel:#6b7fa3;
+  --steel-dim:#3d4f6b;
+  --font-hero:'Bebas Neue',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'Share Tech Mono',monospace;
+  --font-display:'Exo 2',sans-serif;
+  --r:4px;
+  --glow-amber:0 0 30px rgba(240,165,0,0.2);
+  --glow-teal:0 0 30px rgba(0,212,170,0.2);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;scroll-behavior:smooth;}
+
+body{
+  background:var(--obsidian);
+  color:var(--white);
+  font-family:var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Atmospheric background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 20%,rgba(0,212,170,0.035) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 75%,rgba(240,165,0,0.04) 0%,transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 100%,rgba(77,166,255,0.025) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+/* Fine grid */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(22,37,64,0.5) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(22,37,64,0.5) 1px,transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;
+}
+
+/* ============================================================
+   SOURCE LINK BADGE
+   ============================================================ */
+.src{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;
+  background:rgba(77,166,255,0.15);
+  border:1px solid rgba(77,166,255,0.35);
+  border-radius:2px;
+  font-family:var(--font-mono);font-size:0.45rem;
+  color:var(--blue);text-decoration:none;
+  margin-left:4px;vertical-align:middle;flex-shrink:0;
+  transition:all 0.2s;cursor:pointer;
+}
+.src:hover{background:rgba(77,166,255,0.3);border-color:var(--blue);}
+.src::after{content:'SRC';}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:52px;
+  background:rgba(4,8,15,0.95);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;z-index:1000;
+  backdrop-filter:blur(12px);
+}
+
+.brand{display:flex;align-items:center;gap:10px;}
+
+.brand-atom{
+  width:32px;height:32px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-atom::before{
+  content:'';position:absolute;inset:0;
+  border:1.5px solid var(--amber);border-radius:50%;
+  animation:spin-slow 6s linear infinite;
+  border-top-color:transparent;border-right-color:transparent;
+}
+.brand-atom::after{
+  content:'';
+  width:8px;height:8px;
+  background:var(--amber);border-radius:50%;
+  box-shadow:var(--glow-amber);
+  animation:pulse-core 2s ease-in-out infinite;
+}
+@keyframes spin-slow{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes pulse-core{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.75);opacity:0.6;}}
+
+.brand-wordmark{display:flex;flex-direction:column;line-height:1;}
+.brand-ams{
+  font-family:var(--font-hero);
+  font-size:1.1rem;letter-spacing:3px;
+  color:var(--white);
+}
+.brand-nosa{
+  font-family:var(--font-mono);font-size:0.48rem;
+  color:var(--amber);letter-spacing:1.5px;
+}
+
+.topbar-center{
+  display:none;
+  font-family:var(--font-mono);font-size:0.62rem;
+  color:var(--steel);letter-spacing:1px;
+}
+@media(min-width:700px){.topbar-center{display:block;}}
+
+.topbar-right{display:flex;align-items:center;gap:10px;}
+
+.live-badge{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);font-size:0.6rem;
+  color:var(--teal);
+  padding:3px 8px;
+  border:1px solid rgba(0,212,170,0.3);
+  border-radius:2px;
+  background:rgba(0,212,170,0.06);
+}
+.live-dot{
+  width:6px;height:6px;background:var(--teal);
+  border-radius:50%;animation:blink 1.4s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+.clock{font-family:var(--font-mono);font-size:0.65rem;color:var(--steel);display:none;}
+@media(min-width:500px){.clock{display:block;}}
+
+.hamburger{
+  background:none;border:1px solid var(--border);
+  color:var(--steel);width:34px;height:34px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:4px;cursor:pointer;border-radius:var(--r);
+}
+.hamburger span{display:block;width:16px;height:1.5px;background:var(--steel);transition:all 0.2s;}
+@media(min-width:900px){.hamburger{display:none;}}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar{
+  position:fixed;left:0;top:52px;bottom:0;width:230px;
+  background:rgba(8,15,28,0.98);
+  border-right:1px solid var(--border);
+  overflow-y:auto;z-index:900;
+  transform:translateX(-100%);
+  transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column;
+}
+.sidebar.open{transform:translateX(0);}
+@media(min-width:900px){.sidebar{transform:translateX(0);}}
+
+.sidebar-persona{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--amber-soft);
+}
+.persona-label{font-family:var(--font-mono);font-size:0.55rem;color:var(--amber);letter-spacing:2px;margin-bottom:6px;}
+.persona-tabs{display:flex;flex-wrap:wrap;gap:4px;}
+.persona-tab{
+  font-family:var(--font-mono);font-size:0.58rem;
+  padding:3px 7px;border-radius:2px;
+  border:1px solid var(--border);color:var(--steel);
+  cursor:pointer;transition:all 0.2s;background:transparent;
+}
+.persona-tab:hover{border-color:var(--amber);color:var(--amber);}
+.persona-tab.active{background:var(--amber);color:var(--obsidian);border-color:var(--amber);font-weight:700;}
+
+.nav-group-label{
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:var(--steel-dim);letter-spacing:2px;
+  padding:14px 16px 5px;text-transform:uppercase;
+}
+
+.nav-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;cursor:pointer;
+  border-left:2px solid transparent;
+  font-family:var(--font-body);font-weight:500;font-size:0.85rem;
+  color:var(--steel);transition:all 0.18s;
+}
+.nav-item:hover{background:rgba(240,165,0,0.04);color:var(--white);border-left-color:var(--border-hi);}
+.nav-item.active{background:var(--amber-soft);color:var(--amber);border-left-color:var(--amber);}
+.nav-item .nav-tag{
+  font-family:var(--font-mono);font-size:0.52rem;
+  padding:1px 5px;border-radius:2px;
+  background:rgba(240,165,0,0.15);color:var(--amber);
+}
+.nav-item .nav-tag.new{background:rgba(0,212,170,0.15);color:var(--teal);}
+
+.sidebar-credit{
+  margin-top:auto;padding:14px 16px;
+  border-top:1px solid var(--border);
+}
+.credit-name{
+  font-family:var(--font-display);font-weight:700;
+  font-size:0.8rem;color:var(--amber);
+  letter-spacing:0.5px;margin-bottom:5px;
+}
+.credit-body{
+  font-family:var(--font-mono);font-size:0.58rem;
+  color:var(--steel);line-height:1.9;
+}
+.credit-role{color:var(--white);display:block;margin-bottom:2px;}
+.credit-orgs{color:var(--steel-dim);}
+.credit-creator{
+  color:var(--amber);font-size:0.55rem;
+  margin-top:6px;padding-top:6px;
+  border-top:1px solid var(--border);
+  display:block;
+}
+
+/* ============================================================
+   OVERLAY
+   ============================================================ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:850;display:none;}
+.overlay.show{display:block;}
+@media(min-width:900px){.overlay{display:none !important;}}
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+.main{
+  margin-top:52px;margin-left:0;
+  min-height:calc(100vh - 52px);
+  position:relative;z-index:1;
+}
+@media(min-width:900px){.main{margin-left:230px;}}
+
+.module{display:none;padding:24px 18px 100px;animation:fadeUp 0.3s ease;}
+.module.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ============================================================
+   SHARED UI COMPONENTS
+   ============================================================ */
+
+/* Page Header */
+.ph{margin-bottom:28px;}
+.ph-eyebrow{
+  font-family:var(--font-mono);font-size:0.6rem;
+  color:var(--amber);letter-spacing:2px;margin-bottom:6px;
+}
+.ph-title{
+  font-family:var(--font-hero);
+  font-size:clamp(1.8rem,5vw,2.8rem);
+  color:var(--white);letter-spacing:2px;line-height:1;
+  margin-bottom:8px;
+}
+.ph-desc{font-size:0.88rem;color:var(--steel);line-height:1.65;max-width:680px;}
+
+/* Section Title */
+.stitle{
+  font-family:var(--font-display);font-weight:700;
+  font-size:0.78rem;color:var(--teal);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* Stat Cards */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+
+.sc{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;position:relative;overflow:hidden;
+}
+.sc::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--amber),transparent);
+}
+.sc.teal::after{background:linear-gradient(90deg,var(--teal),transparent);}
+.sc.blue::after{background:linear-gradient(90deg,var(--blue),transparent);}
+.sc.red::after{background:linear-gradient(90deg,var(--red),transparent);}
+
+.sc-label{
+  font-family:var(--font-mono);font-size:0.58rem;
+  color:var(--steel);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:8px;
+  display:flex;align-items:center;gap:4px;
+}
+.sc-val{
+  font-family:var(--font-hero);
+  font-size:clamp(1.6rem,4vw,2.4rem);
+  color:var(--white);line-height:1;letter-spacing:1px;
+}
+.sc-val.amber{color:var(--amber);}
+.sc-val.teal{color:var(--teal);}
+.sc-val.blue{color:var(--blue);}
+.sc-val.red{color:var(--red);}
+.sc-sub{font-size:0.72rem;color:var(--steel);margin-top:4px;line-height:1.4;}
+.sc-trend{font-family:var(--font-mono);font-size:0.58rem;margin-top:6px;}
+.sc-trend.up{color:var(--teal);}
+.sc-trend.down{color:var(--red);}
+.sc-trend.flat{color:var(--steel);}
+
+/* Panel */
+.panel{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);margin-bottom:16px;overflow:hidden;
+}
+.panel-head{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  flex-wrap:wrap;
+}
+.panel-title{
+  font-family:var(--font-display);font-weight:600;
+  font-size:0.88rem;color:var(--white);
+}
+.panel-body{padding:16px;}
+.panel-body-flush{padding:0;}
+
+/* Progress */
+.prog{margin-bottom:13px;}
+.prog-row{
+  display:flex;justify-content:space-between;
+  font-size:0.8rem;color:var(--steel);
+  margin-bottom:5px;align-items:center;gap:6px;
+}
+.prog-row strong{color:var(--white);font-weight:500;}
+.prog-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 1.1s ease;background:var(--amber);}
+.prog-fill.teal{background:var(--teal);}
+.prog-fill.blue{background:var(--blue);}
+.prog-fill.red{background:var(--red);}
+
+/* Tags */
+.tag{font-family:var(--font-mono);font-size:0.56rem;padding:2px 6px;border-radius:2px;}
+.tag-teal{background:rgba(0,212,170,0.12);color:var(--teal);}
+.tag-amber{background:rgba(240,165,0,0.12);color:var(--amber);}
+.tag-red{background:rgba(255,71,87,0.12);color:var(--red);}
+.tag-blue{background:rgba(77,166,255,0.12);color:var(--blue);}
+.tag-steel{background:rgba(107,127,163,0.15);color:var(--steel);}
+
+/* Alerts */
+.alert{
+  border-radius:var(--r);padding:12px 14px;margin-bottom:13px;
+  font-size:0.84rem;line-height:1.55;display:flex;gap:10px;align-items:flex-start;
+}
+.alert-icon{
+  font-family:var(--font-mono);font-size:0.58rem;
+  padding:2px 5px;border-radius:2px;flex-shrink:0;margin-top:2px;
+}
+.a-amber{background:var(--amber-soft);border:1px solid rgba(240,165,0,0.25);color:var(--white);}
+.a-amber .alert-icon{background:var(--amber);color:var(--obsidian);}
+.a-teal{background:var(--teal-soft);border:1px solid rgba(0,212,170,0.25);color:var(--white);}
+.a-teal .alert-icon{background:var(--teal);color:var(--obsidian);}
+.a-red{background:var(--red-soft);border:1px solid rgba(255,71,87,0.25);color:var(--white);}
+.a-red .alert-icon{background:var(--red);color:var(--white);}
+.a-blue{background:var(--blue-soft);border:1px solid rgba(77,166,255,0.25);color:var(--white);}
+.a-blue .alert-icon{background:var(--blue);color:var(--obsidian);}
+
+/* Table */
+.dt{width:100%;border-collapse:collapse;font-size:0.8rem;}
+.dt th{
+  font-family:var(--font-mono);font-size:0.56rem;
+  color:var(--steel-dim);letter-spacing:1.5px;text-transform:uppercase;
+  padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);
+}
+.dt td{
+  padding:9px 12px;border-bottom:1px solid rgba(22,37,64,0.6);
+  color:var(--steel);font-family:var(--font-body);vertical-align:middle;
+}
+.dt tr:last-child td{border-bottom:none;}
+.dt td.hl{color:var(--white);font-weight:500;}
+.dt tr:hover td{background:rgba(240,165,0,0.02);}
+
+/* Timeline */
+.tl{position:relative;padding-left:22px;}
+.tl::before{content:'';position:absolute;left:6px;top:10px;bottom:0;width:1.5px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:22px;}
+.tl-dot{
+  position:absolute;left:-19px;top:4px;
+  width:9px;height:9px;border-radius:50%;
+  border:1.5px solid var(--border);background:var(--obsidian);
+}
+.tl-dot.done{border-color:var(--teal);background:var(--teal);}
+.tl-dot.now{border-color:var(--amber);background:var(--amber);animation:pulse-core 1.5s infinite;}
+.tl-date{font-family:var(--font-mono);font-size:0.58rem;color:var(--steel);margin-bottom:2px;display:flex;align-items:center;gap:4px;}
+.tl-name{font-weight:600;font-size:0.9rem;color:var(--white);}
+.tl-detail{font-size:0.78rem;color:var(--steel);margin-top:3px;line-height:1.55;}
+
+/* Check items */
+.ci{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(22,37,64,0.5);}
+.ci:last-child{border-bottom:none;}
+.ci-mark{
+  flex-shrink:0;width:17px;height:17px;border-radius:2px;
+  border:1px solid var(--border);display:flex;align-items:center;
+  justify-content:center;font-family:var(--font-mono);font-size:0.58rem;margin-top:1px;
+}
+.ci-mark.done{background:var(--teal);border-color:var(--teal);color:var(--obsidian);}
+.ci-mark.warn{background:rgba(240,165,0,0.15);border-color:var(--amber);color:var(--amber);}
+.ci-mark.fail{background:rgba(255,71,87,0.15);border-color:var(--red);color:var(--red);}
+.ci-text{flex:1;font-size:0.82rem;color:var(--steel);line-height:1.45;}
+.ci-text strong{color:var(--white);display:block;margin-bottom:1px;font-size:0.84rem;}
+
+/* Form controls */
+.form-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px;}
+@media(min-width:580px){.form-grid{grid-template-columns:1fr 1fr;}}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fl{font-family:var(--font-mono);font-size:0.58rem;color:var(--steel);letter-spacing:1px;text-transform:uppercase;}
+.fs,.fi{
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--white);font-family:var(--font-body);
+  font-size:0.88rem;padding:9px 12px;border-radius:var(--r);
+  outline:none;width:100%;transition:border-color 0.2s;
+}
+.fs:focus,.fi:focus{border-color:var(--amber);}
+
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:3px;
+  background:var(--border);border-radius:2px;outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--amber);cursor:pointer;
+  box-shadow:0 0 8px rgba(240,165,0,0.4);
+}
+.range-val{font-family:var(--font-mono);font-size:0.65rem;color:var(--amber);margin-top:3px;}
+
+/* Buttons */
+.btn{
+  font-family:var(--font-body);font-weight:600;font-size:0.84rem;
+  padding:9px 18px;border:none;border-radius:var(--r);
+  cursor:pointer;transition:all 0.2s;
+  display:inline-flex;align-items:center;gap:6px;letter-spacing:0.3px;
+}
+.btn-primary{background:var(--amber);color:var(--obsidian);}
+.btn-primary:hover{box-shadow:var(--glow-amber);transform:translateY(-1px);}
+.btn-teal{background:var(--teal);color:var(--obsidian);}
+.btn-teal:hover{box-shadow:var(--glow-teal);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--steel);border:1px solid var(--border);}
+.btn-outline:hover{border-color:var(--border-hi);color:var(--white);}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+/* Chart canvas */
+.chart-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
+.chart-label{font-family:var(--font-mono);font-size:0.58rem;color:var(--steel);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+canvas{display:block;width:100%;}
+
+/* Source block */
+.sblock{
+  background:rgba(77,166,255,0.04);border:1px solid rgba(77,166,255,0.12);
+  border-radius:var(--r);padding:9px 13px;margin-top:10px;
+  font-family:var(--font-mono);font-size:0.58rem;color:var(--steel);line-height:1.7;
+}
+.sblock a{color:var(--blue);text-decoration:none;}
+.sblock a:hover{text-decoration:underline;}
+
+/* Two column */
+.two-col{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:760px){.two-col{grid-template-columns:1fr 1fr;}}
+
+/* Three column */
+.three-col{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:600px){.three-col{grid-template-columns:1fr 1fr;}}
+@media(min-width:1000px){.three-col{grid-template-columns:1fr 1fr 1fr;}}
+
+/* Ledger */
+.li{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px;}
+.li:last-child{border-bottom:none;}
+.li-l{display:flex;flex-direction:column;gap:2px;flex:1;}
+.li-id{font-family:var(--font-mono);font-size:0.58rem;color:var(--steel);}
+.li-desc{color:var(--white);font-weight:500;font-size:0.82rem;line-height:1.4;}
+.li-r{text-align:right;flex-shrink:0;}
+.li-amt{font-family:var(--font-hero);letter-spacing:1px;color:var(--amber);}
+
+/* Bar chart */
+.bc{display:flex;flex-direction:column;gap:8px;}
+.bc-row{display:flex;align-items:center;gap:10px;}
+.bc-lbl{font-family:var(--font-body);font-size:0.76rem;color:var(--steel);width:130px;flex-shrink:0;text-align:right;}
+.bc-track{flex:1;height:20px;background:var(--border);border-radius:2px;overflow:hidden;}
+.bc-fill{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:7px;font-family:var(--font-mono);font-size:0.58rem;color:var(--obsidian);font-weight:700;transition:width 1.2s ease;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--obsidian);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border-hi);}
+
+/* Utility */
+.mt-12{margin-top:12px;}.mt-16{margin-top:16px;}.mt-20{margin-top:20px;}.mb-16{margin-bottom:16px;}
+.flex-center{display:flex;align-items:center;gap:6px;}
+
+/* ============================================================
+   PERSONA BANNER (shows which role is active)
+   ============================================================ */
+.persona-banner{
+  display:none;
+  margin-bottom:20px;
+  padding:10px 14px;
+  border-radius:var(--r);
+  font-family:var(--font-mono);font-size:0.65rem;
+  border:1px solid;
+}
+.persona-banner.show{display:flex;align-items:center;gap:10px;}
+.pb-gov{background:rgba(77,166,255,0.08);border-color:rgba(77,166,255,0.3);color:var(--blue);}
+.pb-inv{background:rgba(240,165,0,0.08);border-color:rgba(240,165,0,0.3);color:var(--amber);}
+.pb-prv{background:rgba(0,212,170,0.08);border-color:rgba(0,212,170,0.3);color:var(--teal);}
+.pb-edu{background:rgba(255,71,87,0.08);border-color:rgba(255,71,87,0.3);color:var(--red);}
+
+/* ============================================================
+   SCENARIO SIMULATOR
+   ============================================================ */
+.sim-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:800px){.sim-grid{grid-template-columns:1fr 1fr;}}
+
+.sim-panel{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;
+}
+
+.readiness-display{
+  display:flex;flex-direction:column;align-items:center;
+  gap:16px;padding:20px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--r);
+}
+
+.ring-wrap{position:relative;width:150px;height:150px;}
+.ring-wrap svg{transform:rotate(-90deg);width:150px;height:150px;}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:12;}
+.ring-fg{fill:none;stroke:var(--amber);stroke-width:12;stroke-linecap:round;stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset 1.2s ease,stroke 0.5s ease;}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-num{font-family:var(--font-hero);font-size:2.4rem;color:var(--amber);letter-spacing:1px;line-height:1;}
+.ring-lbl{font-family:var(--font-mono);font-size:0.52rem;color:var(--steel);letter-spacing:1px;}
+
+.outcome-list{width:100%;}
+.outcome-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:0.8rem;
+}
+.outcome-item:last-child{border-bottom:none;}
+.outcome-name{color:var(--steel);}
+.outcome-val{font-family:var(--font-mono);font-size:0.72rem;color:var(--white);}
+
+/* ============================================================
+   BENCHMARKING MODULE
+   ============================================================ */
+.bench-table-wrap{overflow-x:auto;}
+.bench-table{width:100%;border-collapse:collapse;font-size:0.8rem;min-width:700px;}
+.bench-table th{
+  font-family:var(--font-mono);font-size:0.55rem;color:var(--steel);
+  letter-spacing:1.5px;padding:10px 12px;text-align:left;
+  border-bottom:2px solid var(--border);text-transform:uppercase;
+}
+.bench-table td{
+  padding:10px 12px;border-bottom:1px solid rgba(22,37,64,0.5);
+  font-family:var(--font-body);color:var(--steel);vertical-align:middle;
+}
+.bench-table tr:hover td{background:rgba(240,165,0,0.02);}
+.bench-table td.country{color:var(--white);font-weight:600;font-size:0.84rem;}
+.bench-table td.highlight{color:var(--amber);}
+
+.bench-bar{
+  height:14px;background:var(--border);border-radius:2px;overflow:hidden;
+  min-width:80px;
+}
+.bench-bar-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+
+/* ============================================================
+   STORY MODE
+   ============================================================ */
+.story-nav{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.story-step-btn{
+  font-family:var(--font-mono);font-size:0.6rem;
+  padding:5px 10px;border:1px solid var(--border);
+  border-radius:2px;color:var(--steel);background:transparent;
+  cursor:pointer;transition:all 0.2s;
+}
+.story-step-btn:hover{border-color:var(--amber);color:var(--amber);}
+.story-step-btn.active{background:var(--amber);color:var(--obsidian);border-color:var(--amber);}
+
+.story-chapter{display:none;animation:fadeUp 0.4s ease;}
+.story-chapter.active{display:block;}
+
+.story-hero{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);padding:28px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.story-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(240,165,0,0.06) 0%,transparent 60%);
+}
+.story-year{
+  font-family:var(--font-hero);
+  font-size:clamp(3rem,10vw,5.5rem);
+  color:rgba(240,165,0,0.15);
+  line-height:1;letter-spacing:3px;
+  position:absolute;right:16px;top:16px;
+}
+.story-ch-label{font-family:var(--font-mono);font-size:0.6rem;color:var(--amber);letter-spacing:2px;margin-bottom:8px;}
+.story-ch-title{
+  font-family:var(--font-hero);
+  font-size:clamp(1.4rem,4vw,2rem);
+  color:var(--white);letter-spacing:1px;margin-bottom:12px;line-height:1.1;
+}
+.story-ch-body{font-size:0.86rem;color:var(--steel);line-height:1.7;max-width:640px;}
+
+.story-metrics{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;}
+.story-metric{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 16px;text-align:center;flex:1;min-width:100px;
+}
+.story-metric-val{font-family:var(--font-hero);font-size:1.5rem;color:var(--amber);}
+.story-metric-lbl{font-family:var(--font-mono);font-size:0.55rem;color:var(--steel);letter-spacing:1px;margin-top:3px;}
+
+/* ============================================================
+   DOCUMENT HUB
+   ============================================================ */
+.doc-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:20px;}
+@media(min-width:600px){.doc-grid{grid-template-columns:1fr 1fr;}}
+@media(min-width:1000px){.doc-grid{grid-template-columns:1fr 1fr 1fr;}}
+
+.doc-card{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;cursor:pointer;
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.doc-card:hover{border-color:var(--border-hi);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+.doc-card.selected{border-color:var(--amber);background:var(--amber-soft);}
+.doc-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--amber),transparent);opacity:0;
+  transition:opacity 0.2s;
+}
+.doc-card:hover::after,.doc-card.selected::after{opacity:1;}
+.doc-type{font-family:var(--font-mono);font-size:0.55rem;color:var(--amber);letter-spacing:1.5px;margin-bottom:6px;}
+.doc-title{font-weight:600;font-size:0.88rem;color:var(--white);margin-bottom:4px;line-height:1.3;}
+.doc-desc{font-size:0.76rem;color:var(--steel);line-height:1.5;}
+.doc-audience{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+
+.doc-preview{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;min-height:300px;
+  font-size:0.84rem;color:var(--steel);line-height:1.75;
+  position:relative;
+}
+.doc-preview-title{
+  font-family:var(--font-hero);font-size:1.4rem;letter-spacing:1px;
+  color:var(--white);margin-bottom:4px;
+}
+.doc-preview-sub{font-family:var(--font-mono);font-size:0.6rem;color:var(--amber);letter-spacing:1px;margin-bottom:16px;}
+.doc-preview hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.doc-preview h4{color:var(--white);font-weight:600;margin-bottom:6px;font-size:0.9rem;}
+.doc-preview p{margin-bottom:10px;}
+
+/* ============================================================
+   INTERACTIVE LEARNING
+   ============================================================ */
+.learn-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.learn-tab{
+  font-family:var(--font-mono);font-size:0.62rem;padding:6px 12px;
+  border:1px solid var(--border);border-radius:2px;
+  color:var(--steel);background:transparent;cursor:pointer;transition:all 0.2s;
+}
+.learn-tab:hover{border-color:var(--teal);color:var(--teal);}
+.learn-tab.active{background:var(--teal);color:var(--obsidian);border-color:var(--teal);}
+
+.learn-panel{display:none;animation:fadeUp 0.3s ease;}
+.learn-panel.active{display:block;}
+
+.explainer-wrap{
+  display:grid;grid-template-columns:1fr;gap:16px;
+}
+@media(min-width:760px){.explainer-wrap{grid-template-columns:1fr 1fr;}}
+
+.explainer-card{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;
+}
+.explainer-num{
+  font-family:var(--font-hero);font-size:2.5rem;
+  color:rgba(0,212,170,0.2);line-height:1;margin-bottom:6px;
+}
+.explainer-title{font-weight:600;font-size:0.92rem;color:var(--white);margin-bottom:6px;}
+.explainer-body{font-size:0.82rem;color:var(--steel);line-height:1.65;}
+
+/* ============================================================
+   DEMAND ENGINE (visual enhancement)
+   ============================================================ */
+.sector-card{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;
+  display:flex;align-items:flex-start;gap:12px;
+  transition:border-color 0.2s;
+}
+.sector-card:hover{border-color:var(--border-hi);}
+.sector-icon{
+  width:36px;height:36px;border-radius:var(--r);
+  background:var(--amber-soft);border:1px solid rgba(240,165,0,0.2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:var(--font-hero);font-size:0.75rem;color:var(--amber);letter-spacing:1px;
+}
+.sector-name{font-weight:600;font-size:0.86rem;color:var(--white);margin-bottom:3px;}
+.sector-detail{font-size:0.78rem;color:var(--steel);line-height:1.45;}
+
+/* ============================================================
+   RESPONSIVE UTILITIES
+   ============================================================ */
+@media(max-width:480px){
+  .module{padding:16px 12px 80px;}
+  .panel-head{padding:10px 12px;}
+  .panel-body{padding:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">
+    <button class="hamburger" id="menuToggle"><span></span><span></span><span></span></button>
+    <div class="brand-atom"></div>
+    <div class="brand-wordmark">
+      <span class="brand-ams">AMS-NOSA</span>
+      <span class="brand-nosa">AGENTS MANAGEMENT SYSTEM / NATIONAL OPERATING SYSTEM AFRICA</span>
+    </div>
+  </div>
+  <div class="topbar-center" id="topbarContext">RWANDA NUCLEAR PROGRAM / PHASE 1 COMPLETE / APRIL 2026</div>
+  <div class="topbar-right">
+    <span class="clock" id="sysClock"></span>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+  </div>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+
+  <div class="sidebar-persona">
+    <div class="persona-label">ACTIVE PERSPECTIVE</div>
+    <div class="persona-tabs">
+      <button class="persona-tab active" data-persona="default">ALL</button>
+      <button class="persona-tab" data-persona="gov">GOVT</button>
+      <button class="persona-tab" data-persona="inv">INVESTOR</button>
+      <button class="persona-tab" data-persona="prv">PRIVATE</button>
+      <button class="persona-tab" data-persona="edu">EDUCATION</button>
+    </div>
+  </div>
+
+  <div class="nav-group-label">Overview</div>
+  <div class="nav-item active" data-module="overview">Program Overview<span class="nav-tag">LIVE</span></div>
+  <div class="nav-item" data-module="story">Program Story<span class="nav-tag new">NEW</span></div>
+  <div class="nav-item" data-module="benchmark">Benchmarking<span class="nav-tag new">NEW</span></div>
+
+  <div class="nav-group-label">Intelligence</div>
+  <div class="nav-item" data-module="simulator">Scenario Simulator<span class="nav-tag new">NEW</span></div>
+  <div class="nav-item" data-module="decision">Decision Core</div>
+
+  <div class="nav-group-label">Technical</div>
+  <div class="nav-item" data-module="science">Science Engine</div>
+  <div class="nav-item" data-module="learning">Learning Hub<span class="nav-tag new">NEW</span></div>
+
+  <div class="nav-group-label">Finance</div>
+  <div class="nav-item" data-module="finance">Finance Engine</div>
+  <div class="nav-item" data-module="transparency">Transparency</div>
+
+  <div class="nav-group-label">Governance</div>
+  <div class="nav-item" data-module="compliance">Compliance</div>
+  <div class="nav-item" data-module="execution">Execution Twin</div>
+
+  <div class="nav-group-label">People and Market</div>
+  <div class="nav-item" data-module="workforce">Workforce</div>
+  <div class="nav-item" data-module="trust">Public Trust</div>
+  <div class="nav-item" data-module="demand">Demand Engine</div>
+  <div class="nav-item" data-module="regional">Regional Hub</div>
+
+  <div class="nav-group-label">Output</div>
+  <div class="nav-item" data-module="documents">Document Hub<span class="nav-tag new">NEW</span></div>
+
+  <div class="sidebar-credit">
+    <div class="credit-name">Jimmÿ GASANA</div>
+    <div class="credit-body">
+      <span class="credit-role">Founder and CEO</span>
+      <span class="credit-orgs">Wandahill<br>ASC and Associates Ltd<br>Seersbay Ltd<br>Reelisway Ltd</span>
+      <span class="credit-creator">Creator of AMS<br>Agents Management System</span>
+    </div>
+  </div>
+
+</nav>
+
+<!-- MAIN -->
+<main class="main" id="mainContent">
+
+<!-- ================================================================
+     MODULE: OVERVIEW
+     ================================================================ -->
+<section class="module active" id="mod-overview">
+  <div class="ph">
+    <div class="ph-eyebrow">RWANDA / IAEA PHASE 1 COMPLETE / APRIL 2026</div>
+    <div class="ph-title">PROGRAM OVERVIEW</div>
+    <div class="ph-desc">The unified command view for Rwanda's national nuclear energy program. All data drawn from verified institutional sources. Select a perspective above to filter the interface for your audience.</div>
+  </div>
+
+  <div class="persona-banner show" id="pb-overview"><strong>ALL PERSPECTIVES ACTIVE.</strong> Select a role in the sidebar to focus this dashboard.</div>
+
+  <!-- KEY METRICS -->
+  <div class="stitle">Program Status</div>
+  <div class="sg">
+    <div class="sc">
+      <div class="sc-label">IAEA INIR Phase<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div>
+      <div class="sc-val amber">P1</div>
+      <div class="sc-sub">Complete / March 2026</div>
+      <div class="sc-trend up">Phase 2 Preparation Active</div>
+    </div>
+    <div class="sc teal">
+      <div class="sc-label">Nuclear Target Share<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div>
+      <div class="sc-val teal">60 to 70%</div>
+      <div class="sc-sub">Of national electricity mix long term</div>
+      <div class="sc-trend up">Embedded in national energy policy</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Current Installed Capacity<a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div>
+      <div class="sc-val amber">650 to 700</div>
+      <div class="sc-sub">MW total installed, 2025 estimate</div>
+      <div class="sc-trend flat">Hydro 43.9%, thermal 51%, solar 4.2%</div>
+    </div>
+    <div class="sc blue">
+      <div class="sc-label">Household Access<a class="src" href="https://www.reg.rw/what-we-do/access/" target="_blank"></a></div>
+      <div class="sc-val blue">84.6%</div>
+      <div class="sc-sub">As of July 2025</div>
+      <div class="sc-trend up">59.6% grid, 25% off-grid solar</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">First SMR Target<a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-making-significant-progress-on-nuclear-energy-programme" target="_blank"></a></div>
+      <div class="sc-val amber">2030s</div>
+      <div class="sc-sub">Early 2030s first reactor operational</div>
+      <div class="sc-trend flat">SMR units 110 to 150 MW per module</div>
+    </div>
+    <div class="sc red">
+      <div class="sc-label">Electricity Price 2024<a class="src" href="https://www.global-climatescope.org/markets/rwanda" target="_blank"></a></div>
+      <div class="sc-val red">155</div>
+      <div class="sc-sub">USD per MWh, down from 177 in 2023</div>
+      <div class="sc-trend up">Nuclear provides long-term price stability</div>
+    </div>
+  </div>
+
+  <!-- READINESS -->
+  <div class="stitle">Milestone Progress</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="prog">
+        <div class="prog-row"><div class="flex-center"><strong>IAEA Phase 1 INIR</strong><a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div><span style="color:var(--teal)">COMPLETE</span></div>
+        <div class="prog-track"><div class="prog-fill teal" style="width:100%"></div></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><div class="flex-center"><strong>Comprehensive Nuclear Law</strong><a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div><span>Draft Under Review</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:65%"></div></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><div class="flex-center"><strong>Site Surveys and Candidate Identification</strong><a class="src" href="https://www.aa.com.tr/en/africa/rwanda-making-progress-in-adding-nuclear-power-to-its-energy-mix-iaea/3872372" target="_blank"></a></div><span>In Progress</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:55%"></div></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><div class="flex-center"><strong>Regulatory Framework Enhancement</strong><a class="src" href="https://www.capitalfm.co.ke/news/2026/03/rwanda-makes-progress-on-nuclear-energy-infrastructure-iaea-says/" target="_blank"></a></div><span>In Progress</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><strong>Emergency Preparedness</strong><span style="color:var(--teal)">Good Practice</span></div>
+        <div class="prog-track"><div class="prog-fill teal" style="width:75%"></div></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><strong>Vendor Prequalification and EPC Selection</strong><span>Not Started</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK ALERTS -->
+  <div class="stitle">Key Signals</div>
+  <div class="alert a-teal">
+    <span class="alert-icon">IAEA</span>
+    <div>Strong government commitment and coordinated preparatory work are identified by the IAEA as good practices. Rwanda's proactive public engagement and early emergency planning were cited as benchmarks for other countries. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div>
+  </div>
+  <div class="alert a-amber">
+    <span class="alert-icon">PRIORITY</span>
+    <div>The IAEA INIR team has identified three priority next actions: finalize the comprehensive national decision report, complete the nuclear law review, and advance regulatory policy framework. These must be completed before Phase 2 readiness is achieved. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div>
+  </div>
+  <div class="alert a-blue">
+    <span class="alert-icon">OPPORTUNITY</span>
+    <div>Africa nuclear investment pipeline is estimated at USD 105 billion with 15,000 MW of potential capacity by 2035. Rwanda as proof-of-concept accelerates confidence across the entire continental pipeline. <a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></div>
+  </div>
+
+  <!-- PROGRAM TIMELINE COMPACT -->
+  <div class="stitle">Program Timeline</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-dot done"></div>
+          <div class="tl-date">2020<a class="src" href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank"></a></div>
+          <div class="tl-name">RAEB Established / Presidential Order 127/01</div>
+          <div class="tl-detail">Rwanda Atomic Energy Board created as the implementing organisation of the national nuclear programme.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done"></div>
+          <div class="tl-date">2023 to 2024<a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-signs-agreement-with-nano-nuclear" target="_blank"></a></div>
+          <div class="tl-name">Technology Partnerships / Dual Fluid and NANO Nuclear</div>
+          <div class="tl-detail">Cooperation agreement with Dual Fluid Energy (Sept 2023) and MOU with NANO Nuclear Energy (Aug 2024). Cambridge Nuclear Energy Centre collaboration activated.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done"></div>
+          <div class="tl-date">2025<a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div>
+          <div class="tl-name">Nuclear Law Drafted / COP30 Triple Nuclear Pledge</div>
+          <div class="tl-detail">Comprehensive nuclear law drafted covering licensing, safety, waste and liability. Rwanda joined the global commitment to triple nuclear capacity by 2050.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot now"></div>
+          <div class="tl-date">March 2026<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div>
+          <div class="tl-name">IAEA INIR Phase 1 Complete</div>
+          <div class="tl-detail">Ten-member team assessed all 19 infrastructure areas. Strong progress confirmed. Integrated workplan with IAEA under development for continued support.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-date">2026 to 2028</div>
+          <div class="tl-name">Legislation, Site Finalisation, Phase 2 Preparation</div>
+          <div class="tl-detail">Nuclear law enacted. National decision report finalised. Full site characterization. Vendor prequalification launched. IAEA Phase 2 readiness achieved.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-date">Early 2030s<a class="src" href="https://www.greenbuildingafrica.co.za/rwanda-plans-to-introduce-nuclear-energy-into-its-mix-iaea-confirms-infrastructure-progress/" target="_blank"></a></div>
+          <div class="tl-name">First SMR Operational</div>
+          <div class="tl-detail">Rwanda's official target. First 110 to 150 MW SMR module commissioned. Grid integration. Start of nuclear energy supply to national grid.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: PROGRAM STORY
+     ================================================================ -->
+<section class="module" id="mod-story">
+  <div class="ph">
+    <div class="ph-eyebrow">NARRATIVE / INTERACTIVE JOURNEY</div>
+    <div class="ph-title">THE RWANDA NUCLEAR STORY</div>
+    <div class="ph-desc">Walk through Rwanda's nuclear journey chapter by chapter. From the founding decision in 2020 to the first reactor online in the early 2030s. Designed for presentations, briefings, and first-time visitors.</div>
+  </div>
+
+  <div class="story-nav">
+    <button class="story-step-btn active" data-chapter="0">Chapter 1: The Decision</button>
+    <button class="story-step-btn" data-chapter="1">Chapter 2: Building Institutions</button>
+    <button class="story-step-btn" data-chapter="2">Chapter 3: Global Partnerships</button>
+    <button class="story-step-btn" data-chapter="3">Chapter 4: IAEA Endorsement</button>
+    <button class="story-step-btn" data-chapter="4">Chapter 5: The Road to 2030s</button>
+  </div>
+
+  <!-- CHAPTER 1 -->
+  <div class="story-chapter active" id="chapter-0">
+    <div class="story-hero">
+      <div class="story-year">2020</div>
+      <div class="story-ch-label">CHAPTER 1</div>
+      <div class="story-ch-title">THE DECISION TO GO NUCLEAR</div>
+      <div class="story-ch-body">In December 2020, Rwanda made a decisive commitment. Presidential Order 127/01 formally established the Rwanda Atomic Energy Board, the institutional engine of a national nuclear programme. This was not a study or an expression of interest. It was a structural act that embedded nuclear energy into Rwanda's sovereign development architecture. Nuclear power was written into the national energy policy, the national development strategy, and the National Land-Use Master Plan. President Kagame's framing was direct: nuclear is the platform for industrial growth, not just a power source.</div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <div class="story-metric-val">2020</div>
+          <div class="story-metric-lbl">RAEB ESTABLISHED</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">650MW</div>
+          <div class="story-metric-lbl">CURRENT CAPACITY</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">84.6%</div>
+          <div class="story-metric-lbl">HOUSEHOLD ACCESS</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">4.5GW</div>
+          <div class="story-metric-lbl">MID-CENTURY DEMAND</div>
+        </div>
+      </div>
+    </div>
+    <div class="sblock">Sources: RAEB Official <a href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank">raeb.gov.rw</a> / Energy Capital Power <a href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank">energycapitalpower.com</a></div>
+  </div>
+
+  <!-- CHAPTER 2 -->
+  <div class="story-chapter" id="chapter-1">
+    <div class="story-hero">
+      <div class="story-year">2021</div>
+      <div class="story-ch-label">CHAPTER 2</div>
+      <div class="story-ch-title">BUILDING THE INSTITUTIONS</div>
+      <div class="story-ch-body">RAEB was not created as a signalling device. It was built as an operating institution. Rwanda partnered with universities to launch nuclear engineering programmes. First responder training exercises for radiological emergencies were conducted nationally. The University of Rwanda College of Science and Technology launched dedicated nuclear tracks in partnership with RAEB in December 2023. The comprehensive nuclear energy law was drafted through 2025, covering licensing procedures, safety standards, waste management and liability frameworks. Every piece of institutional infrastructure was put in place before the international community was invited to review it.</div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <div class="story-metric-val">19</div>
+          <div class="story-metric-lbl">IAEA INFRASTRUCTURE AREAS</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">2025</div>
+          <div class="story-metric-lbl">NUCLEAR LAW DRAFTED</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">UR</div>
+          <div class="story-metric-lbl">NUCLEAR ENGINEERING DEPT</div>
+        </div>
+      </div>
+    </div>
+    <div class="sblock">Sources: RAEB <a href="https://www.raeb.gov.rw/" target="_blank">raeb.gov.rw</a> / Energy Capital Power <a href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank">energycapitalpower.com</a></div>
+  </div>
+
+  <!-- CHAPTER 3 -->
+  <div class="story-chapter" id="chapter-2">
+    <div class="story-hero">
+      <div class="story-year">2023</div>
+      <div class="story-ch-label">CHAPTER 3</div>
+      <div class="story-ch-title">A DELIBERATE GLOBAL PARTNERSHIP STRATEGY</div>
+      <div class="story-ch-body">Rwanda pursued a deliberately diversified international partnership strategy. In October 2019, Rwanda signed an Intergovernmental Agreement with Russia for a Centre for Nuclear Science and Technology. In September 2023, a cooperation agreement was signed with Dual Fluid Energy, a Canadian-German company developing advanced reactor technology. In August 2024, NANO Nuclear Energy (NASDAQ: NNE) signed an MOU with RAEB to develop the full SMR and microreactor ecosystem, with Cambridge Nuclear Energy Centre providing academic support. Rwanda was simultaneously in discussions with Niger, one of the world's largest uranium producers, on a potential fuel supply partnership. No single dependency. Maximum optionality.</div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <div class="story-metric-val">3+</div>
+          <div class="story-metric-lbl">TECHNOLOGY PARTNERS</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">2023</div>
+          <div class="story-metric-lbl">DUAL FLUID AGREEMENT</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">2024</div>
+          <div class="story-metric-lbl">NANO NUCLEAR MOU</div>
+        </div>
+      </div>
+    </div>
+    <div class="sblock">Sources: World Nuclear News <a href="https://www.world-nuclear-news.org/articles/rwanda-signs-agreement-with-nano-nuclear" target="_blank">world-nuclear-news.org</a> / FIC Rwanda <a href="https://www.fic.gov.rw/updates/news-detail/rwanda-atomic-energy-board-signs-the-agreement-with-dual-fluid-energy" target="_blank">fic.gov.rw</a></div>
+  </div>
+
+  <!-- CHAPTER 4 -->
+  <div class="story-chapter" id="chapter-3">
+    <div class="story-hero">
+      <div class="story-year">2026</div>
+      <div class="story-ch-label">CHAPTER 4</div>
+      <div class="story-ch-title">THE IAEA ENDORSEMENT</div>
+      <div class="story-ch-body">From 2 to 9 March 2026, a ten-member IAEA team conducted the Integrated Nuclear Infrastructure Review in Kigali, assessing all 19 infrastructure areas required for safe nuclear development. The verdict was unambiguous. Strong government commitment, proactive stakeholder engagement, and early emergency preparedness were identified as good practices that could benefit other countries. IAEA Technical Lead Mehmet Ceyhan stated that Rwanda had made significant progress toward deciding on a nuclear power programme. President Kagame addressed the Nuclear Energy Summit in Paris the same week: nuclear energy is not too complex or risky for developing countries. The IAEA and Rwanda will develop an integrated workplan for continued support.</div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <div class="story-metric-val">10</div>
+          <div class="story-metric-lbl">IAEA TEAM MEMBERS</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">19</div>
+          <div class="story-metric-lbl">AREAS ASSESSED</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">3</div>
+          <div class="story-metric-lbl">GOOD PRACTICES CITED</div>
+        </div>
+      </div>
+    </div>
+    <div class="sblock">Sources: IAEA <a href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank">iaea.org</a> / World Nuclear News <a href="https://www.world-nuclear-news.org/articles/rwanda-making-significant-progress-on-nuclear-energy-programme" target="_blank">world-nuclear-news.org</a></div>
+  </div>
+
+  <!-- CHAPTER 5 -->
+  <div class="story-chapter" id="chapter-4">
+    <div class="story-hero">
+      <div class="story-year">2030s</div>
+      <div class="story-ch-label">CHAPTER 5</div>
+      <div class="story-ch-title">THE ROAD TO FIRST LIGHT</div>
+      <div class="story-ch-body">Rwanda's path to the early 2030s is now a structured programme with clear milestones. The nuclear law must be enacted. The comprehensive national decision report must be finalised. A vendor must be prequalified and selected. Financial close must be structured and achieved. Then construction begins. Rwanda's deployment strategy focuses on SMR units of 110 to 150 MW per module, scalable with demand. The significance extends far beyond Rwanda. Africa's electricity demand is expected to grow sevenfold by 2050. Six hundred million Africans remain without electricity. A successful Rwandan deployment becomes the reference plant the entire continent needs. The proof that it can be done here, now, at this scale, with this model. That is what makes Rwanda's programme extraordinary.</div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <div class="story-metric-val">110 to 150</div>
+          <div class="story-metric-lbl">MW PER SMR MODULE</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">600M</div>
+          <div class="story-metric-lbl">AFRICANS WITHOUT POWER</div>
+        </div>
+        <div class="story-metric">
+          <div class="story-metric-val">105B</div>
+          <div class="story-metric-lbl">USD AFRICA PIPELINE</div>
+        </div>
+      </div>
+    </div>
+    <div class="sblock">Sources: Nuclear Business Platform <a href="https://www.nuclearbusiness-platform.com/media/insights/rwanda-first-smr" target="_blank">nuclearbusiness-platform.com</a> / World Nuclear Association <a href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank">world-nuclear.org</a></div>
+  </div>
+
+  <div class="btn-row mt-16">
+    <button class="btn btn-outline" id="prevChapter">Previous</button>
+    <button class="btn btn-primary" id="nextChapter">Next Chapter</button>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: BENCHMARKING
+     ================================================================ -->
+<section class="module" id="mod-benchmark">
+  <div class="ph">
+    <div class="ph-eyebrow">COMPARATIVE INTELLIGENCE / AFRICA NUCLEAR LANDSCAPE</div>
+    <div class="ph-title">BENCHMARKING</div>
+    <div class="ph-desc">Rwanda positioned against peer programs across eight dimensions. Investors and governments use comparative data to assess relative opportunity and risk. All figures sourced from institutional publications.</div>
+  </div>
+
+  <div class="stitle">Country Comparison Across 8 Dimensions</div>
+  <div class="bench-table-wrap">
+    <table class="bench-table">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>IAEA Phase</th>
+          <th>Govt Commitment</th>
+          <th>Legal Framework</th>
+          <th>Partnerships</th>
+          <th>Financing</th>
+          <th>Timeline</th>
+          <th>Overall</th>
+        </tr>
+      </thead>
+      <tbody id="benchBody">
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+  </div>
+  <div class="sblock mt-12">Sources: World Nuclear Association <a href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank">world-nuclear.org</a> / Energy for Growth Hub <a href="https://energyforgrowth.org/article/2025-update-who-in-africa-is-ready-for-nuclear-power/" target="_blank">energyforgrowth.org</a> / Nuclear Business Platform <a href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank">nuclearbusiness-platform.com</a></div>
+
+  <div class="stitle mt-16">Dimension Radar View</div>
+  <div class="chart-wrap">
+    <div class="chart-label">DIMENSION SCORES 0 TO 100 / RWANDA VS PEER AVERAGE</div>
+    <canvas id="radarChart" height="260"></canvas>
+  </div>
+
+  <div class="stitle">Africa Nuclear Investment Pipeline</div>
+  <div class="sg">
+    <div class="sc teal">
+      <div class="sc-label">Africa Pipeline by 2035<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></div>
+      <div class="sc-val teal">15,000</div>
+      <div class="sc-sub">MW potential nuclear capacity</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Total Market Value<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></div>
+      <div class="sc-val amber">105B</div>
+      <div class="sc-sub">USD investment opportunity</div>
+    </div>
+    <div class="sc blue">
+      <div class="sc-label">Uranium Production<a class="src" href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank"></a></div>
+      <div class="sc-val blue">14%</div>
+      <div class="sc-sub">Of global demand from African mines</div>
+    </div>
+    <div class="sc red">
+      <div class="sc-label">Without Electricity<a class="src" href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank"></a></div>
+      <div class="sc-val red">600M</div>
+      <div class="sc-sub">Africans as of 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: SCENARIO SIMULATOR
+     ================================================================ -->
+<section class="module" id="mod-simulator">
+  <div class="ph">
+    <div class="ph-eyebrow">INTERACTIVE DECISION INTELLIGENCE</div>
+    <div class="ph-title">SCENARIO SIMULATOR</div>
+    <div class="ph-desc">Adjust the key program variables and watch the outcomes recalculate in real time. Use this to model the impact of policy decisions, financing choices, and regulatory pace on program readiness and investor confidence.</div>
+  </div>
+
+  <div class="sim-grid">
+    <!-- LEFT: CONTROLS -->
+    <div>
+      <div class="stitle">Program Variables</div>
+
+      <div class="sim-panel">
+        <div class="fg" style="margin-bottom:14px;">
+          <label class="fl">Regulatory Speed (months to law enactment)</label>
+          <input type="range" min="6" max="36" value="18" id="s-regSpeed" oninput="runSimulator()">
+          <div class="range-val" id="s-regSpeedVal">18 months</div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label class="fl">Government Equity Commitment (%)</label>
+          <input type="range" min="5" max="40" value="20" id="s-govEquity" oninput="runSimulator()">
+          <div class="range-val" id="s-govEquityVal">20%</div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label class="fl">DFI and Multilateral Participation (%)</label>
+          <input type="range" min="0" max="60" value="35" id="s-dfi" oninput="runSimulator()">
+          <div class="range-val" id="s-dfiVal">35%</div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label class="fl">Anchor Industrial Off-takers (MW committed)</label>
+          <input type="range" min="0" max="900" step="50" value="400" id="s-offtake" oninput="runSimulator()">
+          <div class="range-val" id="s-offtakeVal">400 MW</div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label class="fl">Workforce Readiness (%)</label>
+          <input type="range" min="10" max="90" value="35" id="s-workforce" oninput="runSimulator()">
+          <div class="range-val" id="s-workforceVal">35%</div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label class="fl">Regional Cooperation Depth (%)</label>
+          <input type="range" min="0" max="100" value="30" id="s-regional" oninput="runSimulator()">
+          <div class="range-val" id="s-regionalVal">30%</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Public Trust Index (%)</label>
+          <input type="range" min="20" max="95" value="71" id="s-trust" oninput="runSimulator()">
+          <div class="range-val" id="s-trustVal">71%</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="resetSimulator()">Reset to Baseline</button>
+        <button class="btn btn-teal" onclick="applyOptimistic()">Apply Optimistic Scenario</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTCOMES -->
+    <div>
+      <div class="stitle">Live Outcomes</div>
+
+      <div class="readiness-display">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 150 150"><circle class="ring-bg" cx="75" cy="75" r="65"/><circle class="ring-fg" id="sim-ring" cx="75" cy="75" r="65"/></svg>
+          <div class="ring-center">
+            <div class="ring-num" id="sim-rdx">58</div>
+            <div class="ring-lbl">READINESS</div>
+          </div>
+        </div>
+        <div class="outcome-list">
+          <div class="outcome-item">
+            <span class="outcome-name">Investor Confidence Index</span>
+            <span class="outcome-val" id="sim-inv">54 / 100</span>
+          </div>
+          <div class="outcome-item">
+            <span class="outcome-name">Estimated Financial Close</span>
+            <span class="outcome-val" id="sim-fc">2029</span>
+          </div>
+          <div class="outcome-item">
+            <span class="outcome-name">First Power Generation</span>
+            <span class="outcome-val" id="sim-fpg">2033</span>
+          </div>
+          <div class="outcome-item">
+            <span class="outcome-name">Bankability Threshold</span>
+            <span class="outcome-val" id="sim-bank" style="color:var(--red)">NOT MET</span>
+          </div>
+          <div class="outcome-item">
+            <span class="outcome-name">Cost Risk Rating</span>
+            <span class="outcome-val" id="sim-cost">HIGH</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel mt-12">
+        <div class="panel-head"><span class="panel-title">System Recommendation</span></div>
+        <div class="panel-body">
+          <div id="sim-recommendation" style="font-size:0.84rem;color:var(--steel);line-height:1.65;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: DECISION CORE
+     ================================================================ -->
+<section class="module" id="mod-decision">
+  <div class="ph">
+    <div class="ph-eyebrow">INTEGRATED ASSESSMENT / APRIL 2026</div>
+    <div class="ph-title">DECISION CORE</div>
+    <div class="ph-desc">Synthesises verified data across all program pillars into a structured assessment. All entries are sourced and timestamped.</div>
+  </div>
+
+  <div class="sg">
+    <div class="sc"><div class="sc-label">IAEA Milestone<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div><div class="sc-val amber">Phase 1</div><div class="sc-sub">INIR Complete / Phase 2 Next</div></div>
+    <div class="sc teal"><div class="sc-label">First SMR<a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-making-significant-progress-on-nuclear-energy-programme" target="_blank"></a></div><div class="sc-val teal">Early 2030s</div><div class="sc-sub">Official Government Target</div></div>
+    <div class="sc blue"><div class="sc-label">Africa Pipeline<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/rwanda-first-smr" target="_blank"></a></div><div class="sc-val blue">15,000 MW</div><div class="sc-sub">Continental potential by 2035</div></div>
+  </div>
+
+  <div class="stitle">Program Assessment</div>
+  <div class="panel">
+    <div class="panel-head"><span class="panel-title">Rwanda Nuclear Program / April 2026</span><span class="tag tag-teal">SOURCED</span></div>
+    <div class="panel-body">
+      <p style="font-size:0.86rem;color:var(--steel);line-height:1.75;margin-bottom:12px;">Rwanda has completed the IAEA INIR Phase 1 mission (2 to 9 March 2026). The ten-member team assessed all 19 infrastructure areas. The mission confirmed strong government commitment and identified proactive stakeholder engagement and early emergency preparedness as good practices for other countries. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></p>
+      <p style="font-size:0.86rem;color:var(--steel);line-height:1.75;margin-bottom:12px;">The IAEA issued three priority recommendations: finalise the comprehensive national decision report, complete the nuclear law review, and advance regulatory policy framework. The comprehensive nuclear law was drafted in 2025 and is under legislative review. <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></p>
+      <p style="font-size:0.86rem;color:var(--steel);line-height:1.75;">Rwanda's deployment strategy focuses on SMR units of 110 to 150 MW per module, aligned with projected demand growth from 650 to 700 MW today to 2.5 to 4.5 GW by mid-century. Technology partnerships include Dual Fluid Energy (2023) and NANO Nuclear Energy (2024). Rwanda holds significance as a continental proof-of-concept. A successful deployment here accelerates commercial confidence across every emerging nuclear market in Africa. <a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/rwanda-first-smr" target="_blank"></a></p>
+    </div>
+  </div>
+
+  <div class="stitle">Verified Decision Log</div>
+  <div class="panel">
+    <div class="panel-body panel-body-flush">
+      <div class="li"><div class="li-l"><span class="li-id">2020-12-03 / Presidential Order 127/01</span><span class="li-desc">RAEB established as implementing organisation of nuclear programme <a class="src" href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">ENACTED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2023-09-12 / Cooperation Agreement</span><span class="li-desc">Dual Fluid Energy Inc. agreement for demonstration reactor <a class="src" href="https://www.fic.gov.rw/updates/news-detail/rwanda-atomic-energy-board-signs-the-agreement-with-dual-fluid-energy" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">SIGNED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2024-08-15 / MOU</span><span class="li-desc">NANO Nuclear Energy (NASDAQ: NNE) MOU for SMR and microreactor ecosystem <a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-signs-agreement-with-nano-nuclear" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">SIGNED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2025 / Legislative</span><span class="li-desc">Comprehensive nuclear energy law drafted covering licensing, safety, waste and liability <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-amber">REVIEW</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2025-11-21 / COP30</span><span class="li-desc">Rwanda joined global commitment to triple nuclear capacity by 2050 <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">COMMITTED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2026-03-09 / IAEA INIR</span><span class="li-desc">Phase 1 mission complete. Strong progress across all 19 areas confirmed <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">COMPLETE</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: SCIENCE ENGINE
+     ================================================================ -->
+<section class="module" id="mod-science">
+  <div class="ph">
+    <div class="ph-eyebrow">REACTOR CONFIGURATION / ENERGY OUTPUT</div>
+    <div class="ph-title">SCIENCE ENGINE</div>
+    <div class="ph-desc">Configure reactor parameters and simulate energy production scenarios. Rwanda's strategy targets SMR units of 110 to 150 MW per module.</div>
+  </div>
+
+  <div class="alert a-blue">
+    <span class="alert-icon">DATA</span>
+    <div>Current installed capacity 650 to 700 MW. Demand projected to 2.5 to 4.5 GW by mid-century. SMR deployment 110 to 150 MW per unit. <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div>
+  </div>
+
+  <div class="stitle">Reactor Configuration</div>
+  <div class="form-grid">
+    <div class="fg">
+      <label class="fl">Reactor Technology</label>
+      <select class="fs" id="reactorType" onchange="updateScience()">
+        <option value="nanozeus">NANO Nuclear ZEUS Microreactor (up to 20 MWe)</option>
+        <option value="nanoodi">NANO Nuclear ODIN Low-Pressure (up to 20 MWe)</option>
+        <option value="dualfluid">Dual Fluid DFR Demonstration (up to 300 MWe)</option>
+        <option value="nuscale" selected>NuScale VOYGR Module (77 MWe each)</option>
+        <option value="bwrx300">GE Hitachi BWRX-300 (300 MWe)</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Number of Units</label>
+      <select class="fs" id="reactorUnits" onchange="updateScience()">
+        <option value="1">1 Unit</option>
+        <option value="2">2 Units</option>
+        <option value="4" selected>4 Units</option>
+        <option value="6">6 Units</option>
+        <option value="12">12 Units (full fleet)</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Capacity Factor (%)</label>
+      <input type="range" min="80" max="95" value="90" id="capFactor" oninput="updateScience();document.getElementById('cfVal').textContent=this.value+'%'">
+      <div class="range-val" id="cfVal">90%</div>
+    </div>
+    <div class="fg">
+      <label class="fl">Cooling System</label>
+      <select class="fs"><option>Light Water</option><option>Air Cooled</option><option>Hybrid</option></select>
+    </div>
+  </div>
+
+  <div class="sg">
+    <div class="sc teal"><div class="sc-label">Total Capacity</div><div class="sc-val teal" id="sci-cap">308</div><div class="sc-sub">MWe installed (simulated)</div></div>
+    <div class="sc"><div class="sc-label">Annual Output</div><div class="sc-val amber" id="sci-out">2,427</div><div class="sc-sub">GWh per year</div></div>
+    <div class="sc blue"><div class="sc-label">Land Footprint</div><div class="sc-val blue" id="sci-land">12</div><div class="sc-sub">Hectares exclusion zone (estimate)</div></div>
+    <div class="sc teal"><div class="sc-label">Carbon Displacement</div><div class="sc-val teal" id="sci-co2">1.6M</div><div class="sc-sub">Tonnes CO2 avoided annually</div></div>
+    <div class="sc"><div class="sc-label">Nuclear Capacity Factor<a class="src" href="https://africarenewal.un.org/en/magazine/its-time-africa-embrace-nuclear-energy" target="_blank"></a></div><div class="sc-val amber">90%</div><div class="sc-sub">Typical operating availability</div></div>
+    <div class="sc"><div class="sc-label">Economic Life<a class="src" href="https://africarenewal.un.org/en/magazine/its-time-africa-embrace-nuclear-energy" target="_blank"></a></div><div class="sc-val amber">40 to 60</div><div class="sc-sub">Years per unit</div></div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">24-HOUR NUCLEAR OUTPUT VS NATIONAL DEMAND / MW <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div>
+    <canvas id="energyChart" height="200"></canvas>
+  </div>
+
+  <div class="stitle">Verified Technology Partnerships</div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Dual Fluid Energy Inc.</span><span class="tag tag-teal">SIGNED 2023</span></div>
+      <div class="panel-body">
+        <p style="font-size:0.82rem;color:var(--steel);line-height:1.6;">Canadian-German company. Cooperation agreement signed September 2023. Advanced reactor technology collaboration. Rwanda provides site and infrastructure; Dual Fluid provides technical implementation.</p>
+        <div class="sblock">Source: <a href="https://www.fic.gov.rw/updates/news-detail/rwanda-atomic-energy-board-signs-the-agreement-with-dual-fluid-energy" target="_blank">FIC Rwanda, September 2023</a></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">NANO Nuclear Energy (NASDAQ: NNE)</span><span class="tag tag-teal">MOU 2024</span></div>
+      <div class="panel-body">
+        <p style="font-size:0.82rem;color:var(--steel);line-height:1.6;">MOU signed August 2024. ZEUS solid-core battery reactor and ODIN low-pressure coolant reactor. Technical assistance, training and educational programme development. Cambridge Nuclear Energy Centre academic collaboration.</p>
+        <div class="sblock">Source: <a href="https://www.world-nuclear-news.org/articles/rwanda-signs-agreement-with-nano-nuclear" target="_blank">World Nuclear News, August 2024</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: LEARNING HUB
+     ================================================================ -->
+<section class="module" id="mod-learning">
+  <div class="ph">
+    <div class="ph-eyebrow">EDUCATION / INTERACTIVE EXPLAINERS</div>
+    <div class="ph-title">LEARNING HUB</div>
+    <div class="ph-desc">For students, educators, policymakers, and any first-time visitor. Plain-language explainers on nuclear energy, the IAEA process, financing structures, and why Rwanda's approach is distinctive.</div>
+  </div>
+
+  <div class="learn-tabs">
+    <button class="learn-tab active" data-learn="nuclear">How Nuclear Works</button>
+    <button class="learn-tab" data-learn="smr">What Are SMRs</button>
+    <button class="learn-tab" data-learn="iaea">IAEA Milestone Process</button>
+    <button class="learn-tab" data-learn="finance">Nuclear Financing</button>
+    <button class="learn-tab" data-learn="africa">Why Africa Now</button>
+    <button class="learn-tab" data-learn="safety">Safety Facts</button>
+  </div>
+
+  <div class="learn-panel active" id="learn-nuclear">
+    <div class="explainer-wrap">
+      <div class="explainer-card"><div class="explainer-num">01</div><div class="explainer-title">Fission: The Core Process</div><div class="explainer-body">Nuclear energy is produced by splitting uranium atoms in a controlled process called fission. When a uranium-235 atom absorbs a neutron, it splits into smaller atoms and releases a large amount of energy as heat. No combustion occurs, so there are no carbon dioxide emissions during operation.</div></div>
+      <div class="explainer-card"><div class="explainer-num">02</div><div class="explainer-title">Heat to Electricity</div><div class="explainer-body">The heat from fission is used to produce steam. Steam drives a turbine connected to a generator, which produces electricity. This is the same process used in coal and gas plants, but the fuel source is nuclear rather than fossil fuels.</div></div>
+      <div class="explainer-card"><div class="explainer-num">03</div><div class="explainer-title">The Chain Reaction</div><div class="explainer-body">Each fission event releases additional neutrons, which can split more uranium atoms. This self-sustaining chain reaction is carefully controlled by inserting or withdrawing control rods. A nuclear plant cannot explode like a nuclear bomb because the fuel is not enriched to the required level.</div></div>
+      <div class="explainer-card"><div class="explainer-num">04</div><div class="explainer-title">Waste Volume</div><div class="explainer-body">The volume of high-level nuclear waste produced is remarkably small. All the spent fuel ever produced by US commercial nuclear reactors would fit inside a single Walmart. The waste is solid, dense, and can be safely stored in sealed containers for very long periods.</div></div>
+    </div>
+  </div>
+
+  <div class="learn-panel" id="learn-smr">
+    <div class="explainer-wrap">
+      <div class="explainer-card"><div class="explainer-num">01</div><div class="explainer-title">What is an SMR</div><div class="explainer-body">A Small Modular Reactor generates between 10 and 300 MW of electricity, compared to 1,000 MW or more for a conventional large reactor. SMRs are built in factories and transported to site, reducing construction time and cost. Rwanda's target is units of 110 to 150 MW per module.</div></div>
+      <div class="explainer-card"><div class="explainer-num">02</div><div class="explainer-title">Why SMRs Suit Africa</div><div class="explainer-body">Africa's electricity grids are smaller than those in Europe or North America. A 1,000 MW reactor would overwhelm most African grids. SMRs can be scaled incrementally, adding capacity as demand grows. They require less water and have smaller site footprints, making them suitable for landlocked countries like Rwanda.</div></div>
+      <div class="explainer-card"><div class="explainer-num">03</div><div class="explainer-title">Passive Safety</div><div class="explainer-body">Most SMR designs feature passive safety systems. In an emergency, cooling happens automatically through physics: gravity, natural circulation, and heat transfer, without needing electricity or human action. The reactor shuts down safely on its own, unlike older reactor designs.</div></div>
+      <div class="explainer-card"><div class="explainer-num">04</div><div class="explainer-title">Financing Advantage</div><div class="explainer-body">A 77 MW SMR module might cost USD 200 to 300 million, compared to USD 10 billion or more for a large conventional reactor. This lower upfront cost makes financing more accessible. Countries can also stage investment, adding modules as revenue from early units begins to flow.</div></div>
+    </div>
+  </div>
+
+  <div class="learn-panel" id="learn-iaea">
+    <div class="explainer-wrap">
+      <div class="explainer-card"><div class="explainer-num">01</div><div class="explainer-title">The Milestones Approach</div><div class="explainer-body">The IAEA provides a structured three-phase framework for countries developing nuclear programmes. Phase 1 is Consider: readiness to commit. Phase 2 is Prepare: ready to invite bids. Phase 3 is Construct: ready to commission. Rwanda has completed Phase 1.</div></div>
+      <div class="explainer-card"><div class="explainer-num">02</div><div class="explainer-title">The INIR Mission</div><div class="explainer-body">An Integrated Nuclear Infrastructure Review is a formal assessment conducted by international experts appointed by the IAEA. They evaluate the country across 19 specific infrastructure areas including safety, security, safeguards, legal framework, waste management, and public information. Rwanda's INIR took place 2 to 9 March 2026.</div></div>
+      <div class="explainer-card"><div class="explainer-num">03</div><div class="explainer-title">The 19 Infrastructure Areas</div><div class="explainer-body">These include: national position, nuclear safety, management, funding and financing, legal framework, safeguards, regulatory framework, radiation protection, electrical grid, human resource development, stakeholder involvement, site and supporting facilities, environmental protection, emergency planning, nuclear security, nuclear fuel cycle, radioactive waste management, industrial involvement, and procurement.</div></div>
+      <div class="explainer-card"><div class="explainer-num">04</div><div class="explainer-title">What Good Practices Mean</div><div class="explainer-body">When the IAEA identifies a good practice, it means Rwanda's approach in that area is considered a model that other countries should study and replicate. The March 2026 mission identified Rwanda's government coordination, stakeholder engagement, and emergency preparedness as good practices. This is a significant institutional endorsement.</div></div>
+    </div>
+  </div>
+
+  <div class="learn-panel" id="learn-finance">
+    <div class="explainer-wrap">
+      <div class="explainer-card"><div class="explainer-num">01</div><div class="explainer-title">The Financing Challenge</div><div class="explainer-body">Nuclear plants have high upfront capital costs, typically 70 to 85 percent fixed before a single kilowatt-hour is generated. This front-loaded cost profile is the primary barrier for developing countries. SMRs reduce this barrier significantly, with a 100 MW unit estimated at USD 200 to 300 million vs USD 5 to 10 billion for a large reactor.</div></div>
+      <div class="explainer-card"><div class="explainer-num">02</div><div class="explainer-title">Blended Finance</div><div class="explainer-body">Most nuclear projects in emerging markets use blended finance: a combination of government equity, development finance institution (DFI) loans, export credit agency (ECA) guarantees from the vendor country, and commercial debt. Each layer de-risks the investment for the next. Rwanda's model will likely follow this structure.</div></div>
+      <div class="explainer-card"><div class="explainer-num">03</div><div class="explainer-title">Power Purchase Agreements</div><div class="explainer-body">A PPA is a long-term contract between the plant owner and an electricity buyer, typically 20 to 30 years. PPAs provide revenue certainty, which enables lenders to commit financing. Industrial buyers such as mining companies and data centres are natural anchor off-takers because they need 24-hour reliable power.</div></div>
+      <div class="explainer-card"><div class="explainer-num">04</div><div class="explainer-title">Build-Own-Operate Models</div><div class="explainer-body">Some vendor countries, particularly Russia and China, offer Build-Own-Operate financing where the vendor finances, builds, owns, and operates the plant, with the host country paying per kilowatt-hour over decades. This reduces upfront risk for the host country but creates long-term strategic dependencies.</div></div>
+    </div>
+  </div>
+
+  <div class="learn-panel" id="learn-africa">
+    <div class="explainer-wrap">
+      <div class="explainer-card"><div class="explainer-num">01</div><div class="explainer-title">The Energy Deficit</div><div class="explainer-body">600 million Africans have no access to electricity. Africa's total electricity generation is expected to grow sevenfold by 2050. The continent produces 14 percent of global uranium supply from Namibia, Niger, and South Africa. The resources, the need, and the technology are converging.</div></div>
+      <div class="explainer-card"><div class="explainer-num">02</div><div class="explainer-title">The SMR Window</div><div class="explainer-body">SMR technology is reaching commercial readiness at exactly the moment when African energy demand is accelerating. Countries that move now on regulatory preparation, workforce development, and site selection will be positioned to deploy in the early 2030s. Countries that wait face a 10 to 15 year delay from standing start.</div></div>
+      <div class="explainer-card"><div class="explainer-num">03</div><div class="explainer-title">Industrial Demand as Anchor</div><div class="explainer-body">Africa's mining sector, growing data centre industry, and manufacturing zones need 24-hour baseload power that solar and wind cannot reliably provide. These industrial consumers are natural anchor buyers for nuclear power. Their PPAs provide the revenue certainty that unlocks financing.</div></div>
+      <div class="explainer-card"><div class="explainer-num">04</div><div class="explainer-title">The Rwanda Proof-of-Concept</div><div class="explainer-body">A successful Rwandan SMR deployment would be the first reference plant in a small African grid context. This reduces technology risk perception for every subsequent African program. The commercial and geopolitical value of being first is enormous. Rwanda is not just building a power plant; it is building the template.</div></div>
+    </div>
+  </div>
+
+  <div class="learn-panel" id="learn-safety">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="ci">
+          <div class="ci-mark done">OK</div>
+          <div class="ci-text"><strong>Deaths per unit of energy (lowest of all sources)</strong>Nuclear energy produces fewer deaths per terawatt-hour than any other energy source, including rooftop solar and wind. Coal produces approximately 2,500 times more deaths per unit of energy than nuclear.</div>
+        </div>
+        <div class="ci">
+          <div class="ci-mark done">OK</div>
+          <div class="ci-text"><strong>Site boundary radiation dose (typical SMR)</strong>The radiation dose at the boundary of a licensed nuclear plant is approximately 0.1 mSv per year. The global average natural background radiation is 2.4 mSv per year. A flight from Kigali to London exposes a passenger to approximately 0.05 to 0.1 mSv.</div>
+        </div>
+        <div class="ci">
+          <div class="ci-mark done">OK</div>
+          <div class="ci-text"><strong>Passive safety eliminates station blackout risk</strong>Modern SMR designs shut down and cool automatically without power, pumps, or human action. This directly addresses the primary failure mode of older reactor designs. The IAEA's safety standards require this passive capability for all new reactor designs seeking international approval.</div>
+        </div>
+        <div class="ci">
+          <div class="ci-mark done">OK</div>
+          <div class="ci-text"><strong>Physical security and safeguards</strong>All nuclear facilities operate under IAEA safeguards, meaning regular international inspections verify that nuclear materials are used only for peaceful purposes. Rwanda's nuclear law includes specific safeguards provisions aligned with IAEA requirements.</div>
+        </div>
+        <div class="ci">
+          <div class="ci-mark done">OK</div>
+          <div class="ci-text"><strong>Rwanda's first-responder training</strong>Rwanda has already conducted a five-day national training and field simulation exercise for first responders to radiological emergencies. The IAEA cited this as a good practice in the March 2026 mission. <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: FINANCE ENGINE
+     ================================================================ -->
+<section class="module" id="mod-finance">
+  <div class="ph">
+    <div class="ph-eyebrow">CAPITAL STRUCTURE / BANKABILITY / RISK ALLOCATION</div>
+    <div class="ph-title">FINANCE ENGINE</div>
+    <div class="ph-desc">Model finance structures using verified SMR cost benchmarks. SMR capital costs range from USD 2 to 3 million per MW installed capacity.</div>
+  </div>
+
+  <div class="sg">
+    <div class="sc"><div class="sc-label">SMR Capital Cost Benchmark<a class="src" href="https://capitalethiopia.com/2025/07/06/africa-eyes-small-modular-reactors-to-plug-power-gaps/" target="_blank"></a></div><div class="sc-val amber">2 to 3M</div><div class="sc-sub">USD per MW installed</div></div>
+    <div class="sc red"><div class="sc-label">Africa Investment Needed<a class="src" href="https://africarenewal.un.org/en/magazine/its-time-africa-embrace-nuclear-energy" target="_blank"></a></div><div class="sc-val red">22.4B</div><div class="sc-sub">USD 2025 to 2040 continent-wide</div></div>
+    <div class="sc teal"><div class="sc-label">Market Opportunity<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></div><div class="sc-val teal">105B</div><div class="sc-sub">USD African nuclear market by 2035</div></div>
+  </div>
+
+  <div class="stitle">Finance Structure Simulator</div>
+  <div class="alert a-amber"><span class="alert-icon">NOTE</span><div>This simulator models a hypothetical configuration using verified cost benchmarks. No financing structure for Rwanda's program has been publicly confirmed. The program is in Phase 1 infrastructure development.</div></div>
+
+  <div class="form-grid">
+    <div class="fg">
+      <label class="fl">SMR Unit Output (MW each)</label>
+      <select class="fs" id="finSMR" onchange="updateFinance()">
+        <option value="77" selected>77 MW (NuScale VOYGR module)</option>
+        <option value="110">110 MW (lower Rwanda target)</option>
+        <option value="150">150 MW (upper Rwanda target)</option>
+        <option value="300">300 MW (GE Hitachi BWRX-300)</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Number of Units</label>
+      <select class="fs" id="finUnits" onchange="updateFinance()">
+        <option value="1">1 Unit</option>
+        <option value="2">2 Units</option>
+        <option value="4" selected>4 Units</option>
+        <option value="6">6 Units</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Capital Cost (USD M per MW)</label>
+      <input type="range" min="2" max="3.5" step="0.1" value="2.5" id="finCPM" oninput="updateFinance();document.getElementById('cpmVal').textContent='$'+this.value+'M/MW'">
+      <div class="range-val" id="cpmVal">$2.5M/MW</div>
+    </div>
+    <div class="fg">
+      <label class="fl">Government Equity (%)</label>
+      <input type="range" min="5" max="40" value="20" id="finGov" oninput="updateFinance();document.getElementById('govVal').textContent=this.value+'%'">
+      <div class="range-val" id="govVal">20%</div>
+    </div>
+  </div>
+
+  <div class="sg">
+    <div class="sc teal"><div class="sc-label">Total Project Cost</div><div class="sc-val teal" id="fin-total">770M</div><div class="sc-sub">USD estimated</div></div>
+    <div class="sc"><div class="sc-label">Government Contribution</div><div class="sc-val amber" id="fin-gov">154M</div><div class="sc-sub">USD equity</div></div>
+    <div class="sc blue"><div class="sc-label">External Financing Needed</div><div class="sc-val blue" id="fin-ext">616M</div><div class="sc-sub">USD DFI, ECA, private debt</div></div>
+  </div>
+
+  <div class="stitle">Risk Allocation Framework</div>
+  <div class="panel">
+    <div class="panel-body panel-body-flush" style="overflow-x:auto;">
+      <table class="dt">
+        <thead><tr><th>Risk Category</th><th>Primary Bearer</th><th>Mitigation</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Construction Overrun</td><td>EPC Contractor / Government</td><td>Fixed-price EPC, contingency reserve</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          <tr><td class="hl">Regulatory Delay</td><td>Government</td><td>IAEA milestone framework, RAEB capacity</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+          <tr><td class="hl">Revenue and Offtake</td><td>Government / Industrial</td><td>Long-term power purchase agreements</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          <tr><td class="hl">Currency Risk</td><td>Shared</td><td>USD-denominated PPA, partial hedging</td><td><span class="tag tag-amber">MED</span></td></tr>
+          <tr><td class="hl">Nuclear Liability</td><td>Government</td><td>Vienna Convention accession, insurance</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          <tr><td class="hl">SMR Commercial Availability</td><td>Shared</td><td>Diversified technology partners, timeline flexibility</td><td><span class="tag tag-amber">MED</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: COMPLIANCE
+     ================================================================ -->
+<section class="module" id="mod-compliance">
+  <div class="ph">
+    <div class="ph-eyebrow">IAEA FRAMEWORK / LICENSING PATHWAY / RAEB</div>
+    <div class="ph-title">REGULATORY COMPLIANCE</div>
+    <div class="ph-desc">Rwanda's regulatory progress against the IAEA Milestones Approach. All data from IAEA mission reports and verified institutional publications.</div>
+  </div>
+
+  <div class="sg">
+    <div class="sc teal"><div class="sc-label">IAEA INIR Phase 1<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div><div class="sc-val teal">DONE</div><div class="sc-sub">2 to 9 March 2026</div></div>
+    <div class="sc"><div class="sc-label">Infrastructure Areas<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div><div class="sc-val amber">19</div><div class="sc-sub">All reviewed by IAEA team</div></div>
+    <div class="sc blue"><div class="sc-label">RAEB Established<a class="src" href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank"></a></div><div class="sc-val blue">2020</div><div class="sc-sub">Presidential Order 127/01</div></div>
+  </div>
+
+  <div class="stitle">Compliance Checklist</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>Independent Regulatory Body (RAEB)</strong>Established by Presidential Order December 2020. Mandate, budget and governance structure in place. <a class="src" href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>Nuclear in National Energy Policy and Land Use Plan</strong>Nuclear integrated into all relevant national strategic documents. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>Stakeholder Engagement (Good Practice)</strong>IAEA INIR cited proactive public engagement as a good practice for other countries. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>Emergency Preparedness (Good Practice)</strong>Early and comprehensive emergency preparedness planning cited by IAEA as a good practice. National first-responder exercise conducted. <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark warn">!</div><div class="ci-text"><strong>Comprehensive Nuclear Law</strong>Drafted 2025. Covers licensing, safety, waste, liability. Under legislative review. <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark warn">!</div><div class="ci-text"><strong>Site Surveys and Candidate Site Identification</strong>Sites identified. Full environmental and site characterization ongoing. <a class="src" href="https://www.aa.com.tr/en/africa/rwanda-making-progress-in-adding-nuclear-power-to-its-energy-mix-iaea/3872372" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark warn">!</div><div class="ci-text"><strong>National Decision Report</strong>IAEA priority recommendation. Must be finalised to guide national decision and unlock Phase 2. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark fail">X</div><div class="ci-text"><strong>Technology Vendor Selected (EPC)</strong>RAEB conducting prequalification for Generation III+ and advanced SMR designs. No vendor selected. <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: EXECUTION TWIN
+     ================================================================ -->
+<section class="module" id="mod-execution">
+  <div class="ph">
+    <div class="ph-eyebrow">PROGRAM PHASES / RISK REGISTER / EXECUTION PATHWAY</div>
+    <div class="ph-title">EXECUTION TWIN</div>
+    <div class="ph-desc">Rwanda's nuclear program is in pre-project infrastructure development. This module models the anticipated execution pathway from Phase 1 completion to first power generation.</div>
+  </div>
+
+  <div class="alert a-blue"><span class="alert-icon">STATUS</span><div>Program is in infrastructure development and pre-feasibility. No construction contract awarded. Execution twin models the anticipated pathway consistent with IAEA Milestone approach and Rwanda's stated early 2030s target. <a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-making-significant-progress-on-nuclear-energy-programme" target="_blank"></a></div></div>
+
+  <div class="stitle">Phase Tracker</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="prog"><div class="prog-row"><strong>Phase 1: Policy, Institutional and Infrastructure Foundations</strong><span style="color:var(--teal)">Complete</span></div><div class="prog-track"><div class="prog-fill teal" style="width:100%"></div></div></div>
+      <div class="prog"><div class="prog-row"><strong>Phase 2: Legislation, Site, Regulatory Framework, Vendor Pre-qualification</strong><span>35%</span></div><div class="prog-track"><div class="prog-fill" style="width:35%"></div></div></div>
+      <div class="prog"><div class="prog-row"><strong>Phase 3: Technology Selection, Financial Close, EPC Contract</strong><span>Not Started</span></div><div class="prog-track"><div class="prog-fill" style="width:0%"></div></div></div>
+      <div class="prog"><div class="prog-row"><strong>Phase 4: Civil Works and Nuclear Island Construction</strong><span>Not Started</span></div><div class="prog-track"><div class="prog-fill" style="width:0%"></div></div></div>
+      <div class="prog"><div class="prog-row"><strong>Phase 5: Commissioning and First Power Generation</strong><span>Not Started</span></div><div class="prog-track"><div class="prog-fill" style="width:0%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="stitle">Risk Register</div>
+  <div class="alert a-red"><span class="alert-icon">RISK 1</span><div><strong>Legislative Timeline:</strong> Nuclear law must be fully enacted before construction permit or vendor contract. Parliamentary delays cascade across the entire program timeline. Mitigation: IAEA workplan support, direct parliamentary engagement.</div></div>
+  <div class="alert a-red"><span class="alert-icon">RISK 2</span><div><strong>Financing Structure:</strong> Nuclear financing is the primary barrier across all African programs. Requires DFI involvement, export credit agency participation, and potentially vendor-state financing. <a class="src" href="https://www.worldnuclearreport.org/Africa-s-Nuclear-Energy-Aims-Test-Financing-Barrier" target="_blank"></a></div></div>
+  <div class="alert a-amber"><span class="alert-icon">RISK 3</span><div><strong>SMR Commercial Availability:</strong> Several SMR designs in Rwanda's partnership portfolio are still in early commercialisation. Rwanda's timeline depends on selected technology reaching commercial readiness aligned with program requirements.</div></div>
+  <div class="alert a-teal"><span class="alert-icon">STRENGTH</span><div><strong>Strong Government Commitment:</strong> President Kagame stated at the Nuclear Energy Summit in Paris that nuclear will diversify Rwanda's energy mix while providing stability for industrial growth. <a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-making-significant-progress-on-nuclear-energy-programme" target="_blank"></a></div></div>
+</section>
+
+<!-- ================================================================
+     MODULE: TRANSPARENCY
+     ================================================================ -->
+<section class="module" id="mod-transparency">
+  <div class="ph">
+    <div class="ph-eyebrow">VERIFIED RECORD / INSTITUTIONAL LOG</div>
+    <div class="ph-title">TRANSPARENCY LAYER</div>
+    <div class="ph-desc">Every entry is sourced and timestamped. This layer supports investor and public confidence through structured institutional accountability.</div>
+  </div>
+
+  <div class="stitle">Partnership and Agreement Log</div>
+  <div class="panel">
+    <div class="panel-body panel-body-flush">
+      <div class="li"><div class="li-l"><span class="li-id">2019-10 / IGA</span><span class="li-desc">Intergovernmental Agreement with Russia for Centre for Nuclear Science and Technology <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">SIGNED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2020-12-03 / Presidential Order 127/01</span><span class="li-desc">RAEB established as implementing organisation <a class="src" href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">ENACTED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2023-09-12 / Cooperation Agreement</span><span class="li-desc">Dual Fluid Energy Inc. (Canadian-German): Demonstration reactor development <a class="src" href="https://www.fic.gov.rw/updates/news-detail/rwanda-atomic-energy-board-signs-the-agreement-with-dual-fluid-energy" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">SIGNED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2024-08-15 / MOU</span><span class="li-desc">NANO Nuclear Energy (NASDAQ: NNE): SMR and microreactor ecosystem, technical assistance, training, Cambridge Nuclear Energy Centre collaboration <a class="src" href="https://nanonuclearenergy.com/nano-nuclear-signs-a-memorandum-of-understanding-with-the-rwanda-atomic-energy-board-to-develop-a-robust-nuclear-energy-ecosystem-within-the-republic-of-rwanda/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">SIGNED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2025 / Draft Law</span><span class="li-desc">Comprehensive nuclear energy law: licensing, safety, waste, liability <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-amber">REVIEW</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2025-11-21 / COP30</span><span class="li-desc">Rwanda joined global commitment to triple nuclear capacity by 2050 <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">COMMITTED</span></div></div>
+      <div class="li"><div class="li-l"><span class="li-id">2026-03-09 / IAEA INIR</span><span class="li-desc">Phase 1 complete. Strong progress across all 19 areas. Minister Gasore confirmed transparent development commitment. <a class="src" href="https://www.greenbuildingafrica.co.za/rwanda-plans-to-introduce-nuclear-energy-into-its-mix-iaea-confirms-infrastructure-progress/" target="_blank"></a></span></div><div class="li-r"><span class="tag tag-teal">CONFIRMED</span></div></div>
+    </div>
+  </div>
+
+  <div class="stitle">Key Public Statements on Record</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="ci" style="padding:12px 0;">
+        <div class="ci-text" style="color:var(--steel);">
+          <strong style="color:var(--white);">President Paul Kagame / Nuclear Energy Summit, Paris / March 2026</strong>
+          Nuclear capacity will diversify Rwanda's energy mix while providing the stability required for industrial growth. Nuclear energy is not too complex or risky for developing countries. <a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-making-significant-progress-on-nuclear-energy-programme" target="_blank"></a>
+        </div>
+      </div>
+      <div class="ci" style="padding:12px 0;">
+        <div class="ci-text" style="color:var(--steel);">
+          <strong style="color:var(--white);">Minister Jimmy Gasore, Ministry of Infrastructure / March 2026</strong>
+          The government remains committed to the responsible and transparent development of nuclear energy. The IAEA review provides valuable guidance to ensure Rwanda's framework aligns with international safety standards. <a class="src" href="https://www.greenbuildingafrica.co.za/rwanda-plans-to-introduce-nuclear-energy-into-its-mix-iaea-confirms-infrastructure-progress/" target="_blank"></a>
+        </div>
+      </div>
+      <div class="ci" style="padding:12px 0;border-bottom:none;">
+        <div class="ci-text" style="color:var(--steel);">
+          <strong style="color:var(--white);">Dr. Fidele Ndahayo, CEO Rwanda Atomic Energy Board / August 2024</strong>
+          This MOU highlights Rwanda's commitment to being a proof-of-concept destination as a strategy to accelerate the integration of innovative technologies and build a knowledge-based economy. <a class="src" href="https://www.world-nuclear-news.org/articles/rwanda-signs-agreement-with-nano-nuclear" target="_blank"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: WORKFORCE
+     ================================================================ -->
+<section class="module" id="mod-workforce">
+  <div class="ph">
+    <div class="ph-eyebrow">SKILLS PIPELINE / TRAINING PROGRAMS / CAPACITY</div>
+    <div class="ph-title">WORKFORCE DEVELOPMENT</div>
+    <div class="ph-desc">Verified training programs and institutional capacity building initiatives. RAEB is the national coordinating institution for all human resource development.</div>
+  </div>
+
+  <div class="stitle">Verified Training Programs</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>University of Rwanda Nuclear Engineering Programs</strong>College of Science and Technology in partnership with RAEB. Launched December 2023. <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>Rosatom Personnel Training Partnership</strong>MoC for training Rwandan personnel in Russia. Preparation for Centre for Nuclear Science and Technology and research reactor. Active since 2019. <a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/rwanda-first-smr" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>NANO Nuclear Technical Assistance and Training</strong>MOU (August 2024) includes training and educational programme development. Cambridge Nuclear Energy Centre academic support. <a class="src" href="https://nanonuclearenergy.com/nano-nuclear-signs-a-memorandum-of-understanding-with-the-rwanda-atomic-energy-board-to-develop-a-robust-nuclear-energy-ecosystem-within-the-republic-of-rwanda/" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>National First Responder Training Exercise</strong>Five-day national training and field simulation for radiological emergency first responders completed. <a class="src" href="https://www.raeb.gov.rw/" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark done">OK</div><div class="ci-text"><strong>IAEA Technical Cooperation and AFRA Program</strong>Ongoing training support through IAEA Technical Cooperation programme and African Regional Cooperative Agreement. <a class="src" href="https://www-pub.iaea.org/MTCD/publications/PDF/p15896-PAT-011_web.pdf" target="_blank"></a></div></div>
+      <div class="ci"><div class="ci-mark warn">!</div><div class="ci-text"><strong>Regulatory Inspector and Technical Staff Capacity</strong>Building regulatory body technical competency is a priority requirement for Milestone 2. <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div></div>
+    </div>
+  </div>
+
+  <div class="stitle">Skills Requirements by Category</div>
+  <div class="panel">
+    <div class="panel-body panel-body-flush" style="overflow-x:auto;">
+      <table class="dt">
+        <thead><tr><th>Role Category</th><th>Phase Needed</th><th>Development Pathway</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Nuclear Engineers</td><td>Phase 2 onward</td><td>University of Rwanda, IAEA fellowships, Rosatom</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+          <tr><td class="hl">Regulatory Inspectors</td><td>Now</td><td>IAEA Technical Cooperation, AFRA</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+          <tr><td class="hl">Radiation Safety Officers</td><td>Now</td><td>IAEA, RAEB national programs</td><td><span class="tag tag-red">CRITICAL</span></td></tr>
+          <tr><td class="hl">Reactor Operators</td><td>Phase 3</td><td>Vendor training program, Rosatom facility</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          <tr><td class="hl">Civil and Structural Engineers</td><td>Phase 3</td><td>Domestic universities, EPC contractor transfer</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          <tr><td class="hl">Project Managers</td><td>Phase 2</td><td>International nuclear project experience</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+          <tr><td class="hl">I and C Systems Specialists</td><td>Phase 3</td><td>Vendor-specific training</td><td><span class="tag tag-amber">MED</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chart-wrap mt-16">
+    <div class="chart-label">ILLUSTRATIVE WORKFORCE PIPELINE / 2024 TO 2035 (INDICATIVE MODEL)</div>
+    <canvas id="workforceChart" height="180"></canvas>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: PUBLIC TRUST
+     ================================================================ -->
+<section class="module" id="mod-trust">
+  <div class="ph">
+    <div class="ph-eyebrow">COMMUNITY ENGAGEMENT / PLAIN LANGUAGE / SAFETY</div>
+    <div class="ph-title">PUBLIC TRUST</div>
+    <div class="ph-desc">Transparent communication grounded in verified facts. Rwanda's public engagement is cited by the IAEA as a good practice for other countries to follow.</div>
+  </div>
+
+  <div class="sg">
+    <div class="sc teal"><div class="sc-label">IAEA Good Practice<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div><div class="sc-val teal">CITED</div><div class="sc-sub">Proactive public engagement recognised</div></div>
+    <div class="sc"><div class="sc-label">Household Access<a class="src" href="https://www.reg.rw/what-we-do/access/" target="_blank"></a></div><div class="sc-val amber">84.6%</div><div class="sc-sub">As of July 2025</div></div>
+    <div class="sc blue"><div class="sc-label">Transparency Commitment<a class="src" href="https://www.greenbuildingafrica.co.za/rwanda-plans-to-introduce-nuclear-energy-into-its-mix-iaea-confirms-infrastructure-progress/" target="_blank"></a></div><div class="sc-val blue">OPEN</div><div class="sc-sub">Ministerial commitment confirmed March 2026</div></div>
+  </div>
+
+  <div class="stitle">Plain Language Questions and Answers</div>
+  <div class="panel">
+    <div class="panel-body">
+      <div class="ci" style="padding:12px 0;"><div class="ci-text" style="color:var(--steel);"><strong style="color:var(--white);">Why is Rwanda pursuing nuclear energy?</strong>Rwanda currently generates approximately 650 to 700 MW. Demand will grow to 2.5 to 4.5 GW by mid-century. Hydropower (43.9% of supply) is vulnerable to rainfall variability. Nuclear provides stable, 24-hour baseload electricity with no carbon emissions and predictable long-term pricing. <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div></div>
+      <div class="ci" style="padding:12px 0;"><div class="ci-text" style="color:var(--steel);"><strong style="color:var(--white);">What type of reactor will Rwanda build?</strong>Small Modular Reactors of 110 to 150 MW per unit. Rwanda has signed technology cooperation agreements with Dual Fluid Energy and NANO Nuclear Energy. No vendor has been selected yet. RAEB is conducting formal prequalification of Generation III+ and advanced SMR designs. <a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/rwanda-first-smr" target="_blank"></a></div></div>
+      <div class="ci" style="padding:12px 0;"><div class="ci-text" style="color:var(--steel);"><strong style="color:var(--white);">Is nuclear power safe for Rwanda?</strong>Modern SMR designs selected by Rwanda feature passive safety systems that shut down and cool automatically without power or human action. The IAEA cited Rwanda's early emergency preparedness as a good practice. A national first-responder radiological training exercise has been completed. <a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></div></div>
+      <div class="ci" style="padding:12px 0;"><div class="ci-text" style="color:var(--steel);"><strong style="color:var(--white);">How can citizens participate?</strong>The IAEA Milestones Approach requires formal public consultation during site selection and licensing. The Rwanda Atomic Energy Board (RAEB) is the responsible public authority. Contact: KG 13 Avenue 20, Nyarutarama, Kigali. Website: raeb.gov.rw. <a class="src" href="https://raeb.prod.risa.rw/about-raeb/overview" target="_blank"></a></div></div>
+    </div>
+  </div>
+
+  <div class="stitle">Safety Context</div>
+  <div class="sg">
+    <div class="sc teal"><div class="sc-label">Site Boundary Dose (typical SMR)</div><div class="sc-val teal">0.1</div><div class="sc-sub">mSv per year</div></div>
+    <div class="sc"><div class="sc-label">Global Background Radiation</div><div class="sc-val amber">2.4</div><div class="sc-sub">mSv per year average</div></div>
+    <div class="sc blue"><div class="sc-label">Nuclear Capacity Factor<a class="src" href="https://africarenewal.un.org/en/magazine/its-time-africa-embrace-nuclear-energy" target="_blank"></a></div><div class="sc-val blue">90%</div><div class="sc-sub">vs 25% solar average</div></div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: DEMAND ENGINE
+     ================================================================ -->
+<section class="module" id="mod-demand">
+  <div class="ph">
+    <div class="ph-eyebrow">DEMAND GROWTH / INDUSTRIAL INTEGRATION / OFFTAKE</div>
+    <div class="ph-title">DEMAND ENGINE</div>
+    <div class="ph-desc">Rwanda's energy demand context and the industrial anchoring case for nuclear deployment.</div>
+  </div>
+
+  <div class="sg">
+    <div class="sc"><div class="sc-label">Current Capacity<a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div><div class="sc-val amber">650 to 700</div><div class="sc-sub">MW total installed, 2025</div></div>
+    <div class="sc teal"><div class="sc-label">Mid-Century Demand<a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div><div class="sc-val teal">2.5 to 4.5</div><div class="sc-sub">GW projected by mid-century</div></div>
+    <div class="sc blue"><div class="sc-label">Africa Demand Growth<a class="src" href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank"></a></div><div class="sc-val blue">7x</div><div class="sc-sub">Continental generation by 2050</div></div>
+  </div>
+
+  <div class="stitle">Energy Mix (Current)</div>
+  <div class="panel">
+    <div class="panel-head"><span class="panel-title">Generation Technology Share</span><a class="src" href="https://www.reg.rw/what-we-do/generation/" target="_blank"></a></div>
+    <div class="panel-body">
+      <div class="bc">
+        <div class="bc-row"><div class="bc-lbl">Thermal (fossil)</div><div class="bc-track"><div class="bc-fill" style="width:51%;background:var(--amber);">51%</div></div></div>
+        <div class="bc-row"><div class="bc-lbl">Hydropower</div><div class="bc-track"><div class="bc-fill" style="width:43.9%;background:var(--blue);">43.9%</div></div></div>
+        <div class="bc-row"><div class="bc-lbl">Solar</div><div class="bc-track"><div class="bc-fill" style="width:4.2%;background:var(--teal);">4.2%</div></div></div>
+      </div>
+      <div class="sblock">Source: Rwanda Energy Group <a href="https://www.reg.rw/what-we-do/generation/" target="_blank">reg.rw</a>. Heavy thermal dependence and climate-vulnerable hydropower are primary drivers for nuclear baseload strategy.</div>
+    </div>
+  </div>
+
+  <div class="stitle">Industrial Demand Sectors</div>
+  <div class="three-col">
+    <div class="sector-card"><div class="sector-icon">MIN</div><div><div class="sector-name">Mining and Minerals</div><div class="sector-detail">Coltan, cassiterite, wolframite and gold production requires reliable 24-hour baseload power. Natural anchor off-taker for nuclear output.</div></div></div>
+    <div class="sector-card"><div class="sector-icon">DTC</div><div><div class="sector-name">Data Centers</div><div class="sector-detail">Rwanda's ambition as an East African technology hub. Data centres have zero tolerance for outages. Nuclear's 90% availability makes it the natural anchor.</div></div></div>
+    <div class="sector-card"><div class="sector-icon">MFG</div><div><div class="sector-name">Manufacturing</div><div class="sector-detail">Kigali Special Economic Zone and industrial parks need predictable, affordable baseload power for investment planning confidence.</div></div></div>
+    <div class="sector-card"><div class="sector-icon">AGR</div><div><div class="sector-name">Agricultural Processing</div><div class="sector-detail">Domestic processing of agricultural commodities. Cold chain, food processing, and irrigation all require predictable, affordable electricity.</div></div></div>
+    <div class="sector-card"><div class="sector-icon">REG</div><div><div class="sector-name">Rwanda Energy Group</div><div class="sector-detail">National utility as primary off-taker for residential and commercial supply. Stable nuclear pricing supports REG's long-term tariff planning.</div></div></div>
+    <div class="sector-card"><div class="sector-icon">EXP</div><div><div class="sector-name">Regional Export</div><div class="sector-detail">East African Power Pool framework enables potential export of surplus capacity to Uganda, Tanzania, and Burundi, improving project economics.</div></div></div>
+  </div>
+
+  <div class="chart-wrap mt-16">
+    <div class="chart-label">RWANDA DEMAND TRAJECTORY 2020 TO 2050 / MW <a class="src" href="https://energycapitalpower.com/iaea-endorses-rwandas-nuclear-program-as-smrs-target-70-national-power/" target="_blank"></a></div>
+    <canvas id="demandChart" height="200"></canvas>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODULE: REGIONAL HUB
+     ================================================================ -->
+<section class="module" id="mod-regional">
+  <div class="ph">
+    <div class="ph-eyebrow">AFRICA NUCLEAR LANDSCAPE / REGIONAL COOPERATION</div>
+    <div class="ph-title">REGIONAL HUB</div>
+    <div class="ph-desc">Rwanda positioned within the continental nuclear landscape. Verified data on peer programs and the strategic significance of Rwanda as a proof-of-concept model.</div>
+  </div>
+
+  <div class="sg">
+    <div class="sc teal"><div class="sc-label">Africa by 2035<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></div><div class="sc-val teal">15,000</div><div class="sc-sub">MW potential nuclear capacity</div></div>
+    <div class="sc"><div class="sc-label">Market Value<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></div><div class="sc-val amber">105B</div><div class="sc-sub">USD investment opportunity</div></div>
+    <div class="sc blue"><div class="sc-label">Without Electricity<a class="src" href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank"></a></div><div class="sc-val blue">600M</div><div class="sc-sub">Africans as of 2025</div></div>
+  </div>
+
+  <div class="stitle">Africa Nuclear Program Status</div>
+  <div class="panel">
+    <div class="panel-body panel-body-flush" style="overflow-x:auto;">
+      <table class="dt" style="min-width:600px;">
+        <thead><tr><th>Country</th><th>IAEA Phase</th><th>Target</th><th>Key Development</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Egypt<a class="src" href="https://capitalethiopia.com/2025/07/06/africa-eyes-small-modular-reactors-to-plug-power-gaps/" target="_blank"></a></td><td>Under Construction</td><td>4,800 MW</td><td>El-Dabaa, Rosatom, USD 30B, 4 units, first target 2028</td><td><span class="tag tag-teal">ACTIVE BUILD</span></td></tr>
+          <tr><td class="hl">South Africa<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></td><td>Operating</td><td>+2,500 MW</td><td>Koeberg Unit 1 extended 20 years. Only operating nuclear plant in Africa.</td><td><span class="tag tag-teal">OPERATING</span></td></tr>
+          <tr><td class="hl">Ghana<a class="src" href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank"></a></td><td>Milestone 2</td><td>1,000 MW</td><td>NuScale VOYGR-12 framework with Regnum Technology. First E2 training centre in Africa opened Jan 2025. Target 2034.</td><td><span class="tag tag-amber">ADVANCED</span></td></tr>
+          <tr><td class="hl">Rwanda<a class="src" href="https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development" target="_blank"></a></td><td>Phase 1 Complete</td><td>60 to 70% of mix</td><td>IAEA INIR Phase 1 complete March 2026. Dual Fluid and NANO Nuclear partnerships. First SMR early 2030s.</td><td><span class="tag tag-amber">PHASE 1 DONE</span></td></tr>
+          <tr><td class="hl">Kenya<a class="src" href="https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries" target="_blank"></a></td><td>Milestone 2</td><td>1,000 MW</td><td>NuPEA dissolved Jan 2025 as part of state reforms. Projects on hold. MOU with CNNC March 2025.</td><td><span class="tag tag-red">ON HOLD</span></td></tr>
+          <tr><td class="hl">Ethiopia<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></td><td>Milestone 1</td><td>TBD</td><td>Rosatom cooperation roadmap signed Feb 2025. NSTC feasibility study underway.</td><td><span class="tag tag-steel">EARLY</span></td></tr>
+          <tr><td class="hl">Nigeria<a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution" target="_blank"></a></td><td>Milestone 1 to 2</td><td>4,800 MW</td><td>China-Nigeria FOCAC 2024 deal. NAEC hosting Africa Nuclear Business Platform 22 to 23 April 2026 Abuja.</td><td><span class="tag tag-amber">DEVELOPING</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="alert a-blue"><span class="alert-icon">ANALYSIS</span><div>Rwanda is demonstrating that grid size and infrastructure starting point are not the binding constraints on nuclear adoption. A successful Rwanda SMR deployment provides the technology sector with an operating reference plant in an emerging market context, the most commercially valuable asset any new nuclear technology can possess. <a class="src" href="https://www.nuclearbusiness-platform.com/media/insights/rwanda-first-smr" target="_blank"></a></div></div>
+</section>
+
+<!-- ================================================================
+     MODULE: DOCUMENT HUB
+     ================================================================ -->
+<section class="module" id="mod-documents">
+  <div class="ph">
+    <div class="ph-eyebrow">OUTPUT INTELLIGENCE / PROGRAM MANAGEMENT OFFICE</div>
+    <div class="ph-title">DOCUMENT HUB</div>
+    <div class="ph-desc">Select a document type to generate a structured output for your audience. Designed for governments, investors, private sector partners, and development organisations.</div>
+  </div>
+
+  <div class="stitle">Select Document Type</div>
+  <div class="doc-grid" id="docGrid">
+    <div class="doc-card" data-doc="investor" onclick="selectDoc(this,'investor')">
+      <div class="doc-type">INVESTOR BRIEF</div>
+      <div class="doc-title">Rwanda Nuclear Investment Opportunity</div>
+      <div class="doc-desc">Project overview, deal structure, risk allocation, and return scenario for institutional investors and development finance institutions.</div>
+      <div class="doc-audience"><span class="tag tag-amber">INVESTORS</span><span class="tag tag-blue">DFIs</span><span class="tag tag-steel">ECAs</span></div>
+    </div>
+    <div class="doc-card" data-doc="govt" onclick="selectDoc(this,'govt')">
+      <div class="doc-type">GOVERNMENT BRIEFING</div>
+      <div class="doc-title">Program Status and Policy Priorities</div>
+      <div class="doc-desc">Current IAEA milestone status, priority regulatory actions, and policy recommendations for ministerial and cabinet-level briefings.</div>
+      <div class="doc-audience"><span class="tag tag-blue">GOVERNMENT</span><span class="tag tag-steel">PARLIAMENT</span></div>
+    </div>
+    <div class="doc-card" data-doc="supply" onclick="selectDoc(this,'supply')">
+      <div class="doc-type">SUPPLY CHAIN BRIEF</div>
+      <div class="doc-title">Private Sector Participation Opportunities</div>
+      <div class="doc-desc">Contract categories, procurement pipeline, local content framework, and engagement pathway for private sector companies.</div>
+      <div class="doc-audience"><span class="tag tag-teal">PRIVATE SECTOR</span><span class="tag tag-steel">EPC</span></div>
+    </div>
+    <div class="doc-card" data-doc="regional" onclick="selectDoc(this,'regional')">
+      <div class="doc-type">REGIONAL BRIEF</div>
+      <div class="doc-title">Africa Nuclear Cooperation Framework</div>
+      <div class="doc-desc">Continental nuclear pipeline, EAC cooperation opportunity, and the Rwanda proof-of-concept model for regional governments and AU institutions.</div>
+      <div class="doc-audience"><span class="tag tag-blue">AU</span><span class="tag tag-amber">EAC</span><span class="tag tag-steel">REGIONAL GOVTS</span></div>
+    </div>
+    <div class="doc-card" data-doc="edu" onclick="selectDoc(this,'edu')">
+      <div class="doc-type">EDUCATIONAL BRIEF</div>
+      <div class="doc-title">Nuclear Energy for Africa: An Educational Overview</div>
+      <div class="doc-desc">Plain-language overview of nuclear technology, safety, environmental impact, and Rwanda's program for universities and research institutions.</div>
+      <div class="doc-audience"><span class="tag tag-teal">UNIVERSITIES</span><span class="tag tag-steel">RESEARCHERS</span></div>
+    </div>
+    <div class="doc-card" data-doc="media" onclick="selectDoc(this,'media')">
+      <div class="doc-type">MEDIA BRIEF</div>
+      <div class="doc-title">Rwanda Nuclear Program: Key Facts and Context</div>
+      <div class="doc-desc">Verified facts, key dates, authoritative quotes, and context for journalists and communications teams.</div>
+      <div class="doc-audience"><span class="tag tag-amber">MEDIA</span><span class="tag tag-steel">COMMS</span></div>
+    </div>
+  </div>
+
+  <div class="stitle mt-20">Generated Document</div>
+  <div class="doc-preview" id="docPreview">
+    <div style="color:var(--steel-dim);font-family:var(--font-mono);font-size:0.65rem;text-align:center;padding:40px 0;">Select a document type above to generate output</div>
+  </div>
+  <div class="btn-row" id="docActions" style="display:none;">
+    <button class="btn btn-primary" onclick="printDoc()">Print Document</button>
+    <button class="btn btn-outline" onclick="copyDocText()">Copy Text</button>
+  </div>
+</section>
+
+</main>
+
+<!-- ================================================================
+     JAVASCRIPT ENGINE
+     ================================================================ -->
+<script>
+// ============================================================
+// NAVIGATION
+// ============================================================
+const navItems = document.querySelectorAll('.nav-item[data-module]');
+const modules  = document.querySelectorAll('.module');
+const sidebar  = document.getElementById('sidebar');
+const overlay  = document.getElementById('overlay');
+
+function goTo(id) {
+  navItems.forEach(n => n.classList.remove('active'));
+  modules.forEach(m => m.classList.remove('active'));
+  const ni = document.querySelector('[data-module="'+id+'"]');
+  const mi = document.getElementById('mod-'+id);
+  if(ni) ni.classList.add('active');
+  if(mi) mi.classList.add('active');
+  closeSidebar();
+  window.scrollTo(0,0);
+  if(id==='science')   setTimeout(drawEnergy,250);
+  if(id==='demand')    setTimeout(drawDemand,250);
+  if(id==='workforce') setTimeout(drawWorkforce,250);
+  if(id==='benchmark') setTimeout(drawRadar,250);
+  if(id==='simulator') { runSimulator(); }
+}
+
+navItems.forEach(i => i.addEventListener('click', () => goTo(i.dataset.module)));
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+overlay.addEventListener('click', closeSidebar);
+
+// ============================================================
+// CLOCK
+// ============================================================
+function updateClock() {
+  const n = new Date();
+  const pad = v => String(v).padStart(2,'0');
+  document.getElementById('sysClock').textContent =
+    'UTC '+pad(n.getUTCHours())+':'+pad(n.getUTCMinutes())+':'+pad(n.getUTCSeconds());
+}
+setInterval(updateClock,1000); updateClock();
+
+// ============================================================
+// PERSONA ENGINE
+// ============================================================
+document.querySelectorAll('.persona-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.persona-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const p = tab.dataset.persona;
+    const ctx = {
+      default:'RWANDA NUCLEAR PROGRAM / PHASE 1 COMPLETE / APRIL 2026',
+      gov:'GOVERNMENT PERSPECTIVE / POLICY AND REGULATORY PRIORITIES',
+      inv:'INVESTOR PERSPECTIVE / DEAL STRUCTURE AND BANKABILITY',
+      prv:'PRIVATE SECTOR PERSPECTIVE / CONTRACT AND SUPPLY CHAIN',
+      edu:'EDUCATION PERSPECTIVE / LEARNING AND CAPACITY DEVELOPMENT'
+    };
+    document.getElementById('topbarContext').textContent = ctx[p] || ctx.default;
+  });
+});
+
+// ============================================================
+// STORY CHAPTERS
+// ============================================================
+let currentChapter = 0;
+const totalChapters = 5;
+
+function showChapter(n) {
+  document.querySelectorAll('.story-chapter').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.story-step-btn').forEach(b => b.classList.remove('active'));
+  const ch = document.getElementById('chapter-'+n);
+  const btn = document.querySelector('[data-chapter="'+n+'"]');
+  if(ch) ch.classList.add('active');
+  if(btn) btn.classList.add('active');
+  currentChapter = n;
+}
+
+document.querySelectorAll('.story-step-btn').forEach(btn => {
+  btn.addEventListener('click', () => showChapter(parseInt(btn.dataset.chapter)));
+});
+
+document.getElementById('nextChapter').addEventListener('click', () => {
+  showChapter((currentChapter+1) % totalChapters);
+});
+document.getElementById('prevChapter').addEventListener('click', () => {
+  showChapter((currentChapter-1+totalChapters) % totalChapters);
+});
+
+// ============================================================
+// LEARNING TABS
+// ============================================================
+document.querySelectorAll('.learn-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.learn-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.learn-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const lp = document.getElementById('learn-'+tab.dataset.learn);
+    if(lp) lp.classList.add('active');
+  });
+});
+
+// ============================================================
+// SCIENCE ENGINE
+// ============================================================
+const reactorDB = {
+  nanozeus:  {mw:10,land:1},
+  nanoodi:   {mw:10,land:1},
+  dualfluid: {mw:100,land:4},
+  nuscale:   {mw:77,land:3},
+  bwrx300:   {mw:300,land:5}
+};
+function updateScience() {
+  const r = reactorDB[document.getElementById('reactorType').value];
+  const u = parseInt(document.getElementById('reactorUnits').value);
+  const cf= parseInt(document.getElementById('capFactor').value)/100;
+  const mw = r.mw*u;
+  const gwh = Math.round(mw*8760*cf/1000);
+  const co2 = gwh*0.65;
+  document.getElementById('sci-cap').textContent = mw.toLocaleString();
+  document.getElementById('sci-out').textContent = gwh.toLocaleString();
+  document.getElementById('sci-land').textContent = (r.land*u).toFixed(0);
+  document.getElementById('sci-co2').textContent = co2>=1000?(co2/1000).toFixed(1)+'M':Math.round(co2)+'K';
+}
+
+// ============================================================
+// FINANCE ENGINE
+// ============================================================
+function updateFinance() {
+  const mw   = parseInt(document.getElementById('finSMR').value);
+  const u    = parseInt(document.getElementById('finUnits').value);
+  const cpm  = parseFloat(document.getElementById('finCPM').value);
+  const gp   = parseInt(document.getElementById('finGov').value);
+  const total = mw*u*cpm;
+  const gov   = total*gp/100;
+  const ext   = total-gov;
+  const f = v => v>=1000?(v/1000).toFixed(1)+'B USD':Math.round(v)+'M USD';
+  document.getElementById('fin-total').textContent = f(total);
+  document.getElementById('fin-gov').textContent   = f(gov);
+  document.getElementById('fin-ext').textContent   = f(ext);
+}
+
+// ============================================================
+// SCENARIO SIMULATOR
+// ============================================================
+function getSlider(id) { return parseInt(document.getElementById(id).value); }
+function getFSlider(id) { return parseFloat(document.getElementById(id).value); }
+
+function runSimulator() {
+  const reg = getSlider('s-regSpeed');
+  const gov = getSlider('s-govEquity');
+  const dfi = getSlider('s-dfi');
+  const oft = getSlider('s-offtake');
+  const wf  = getSlider('s-workforce');
+  const rg  = getSlider('s-regional');
+  const tr  = getSlider('s-trust');
+
+  document.getElementById('s-regSpeedVal').textContent = reg+' months';
+  document.getElementById('s-govEquityVal').textContent = gov+'%';
+  document.getElementById('s-dfiVal').textContent = dfi+'%';
+  document.getElementById('s-offtakeVal').textContent = oft+' MW';
+  document.getElementById('s-workforceVal').textContent = wf+'%';
+  document.getElementById('s-regionalVal').textContent = rg+'%';
+  document.getElementById('s-trustVal').textContent = tr+'%';
+
+  // Composite readiness
+  const regScore   = Math.max(0, 100 - reg*2.2);
+  const finScore   = (gov*0.8 + dfi*0.6) * 0.5;
+  const oftScore   = Math.min(100, (oft/900)*100);
+  const wfScore    = wf;
+  const rgScore    = rg;
+  const trScore    = tr;
+  const rdx = Math.round((regScore*0.25 + finScore*0.2 + oftScore*0.15 + wfScore*0.15 + rgScore*0.1 + trScore*0.15));
+
+  const invConf = Math.round(Math.min(100,(finScore*0.4+oftScore*0.3+regScore*0.2+trScore*0.1)));
+  const bankMet = invConf >= 65;
+  const fcYear  = 2026 + Math.ceil(reg/12) + (bankMet ? 1 : 2);
+  const fpgYear = fcYear + 4;
+  const costRisk = reg > 24 ? 'VERY HIGH' : reg > 12 ? 'HIGH' : 'MODERATE';
+
+  // Update ring
+  const circ = 408;
+  const offset = circ - (circ*rdx/100);
+  const ring = document.getElementById('sim-ring');
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = rdx >= 70 ? 'var(--teal)' : rdx >= 50 ? 'var(--amber)' : 'var(--red)';
+  document.getElementById('sim-rdx').textContent = rdx;
+  document.getElementById('sim-rdx').style.color = rdx >= 70 ? 'var(--teal)' : rdx >= 50 ? 'var(--amber)' : 'var(--red)';
+
+  document.getElementById('sim-inv').textContent = invConf+' / 100';
+  document.getElementById('sim-fc').textContent  = fcYear;
+  document.getElementById('sim-fpg').textContent = fpgYear;
+  document.getElementById('sim-bank').textContent = bankMet ? 'MET' : 'NOT MET';
+  document.getElementById('sim-bank').style.color = bankMet ? 'var(--teal)' : 'var(--red)';
+  document.getElementById('sim-cost').textContent = costRisk;
+
+  // Recommendation
+  const recs = [];
+  if(reg > 18) recs.push('Accelerate nuclear law enactment. Regulatory timeline is the primary constraint on financing close and investor confidence. Target enactment within 12 months.');
+  if(invConf < 65) recs.push('Investor confidence below bankability threshold of 65. Increase DFI participation and anchor additional industrial off-takers to strengthen revenue certainty.');
+  if(oft < 500) recs.push('Anchored demand at '+oft+' MW is below recommended threshold. Recruit additional industrial off-takers in mining, data centres, and manufacturing sectors.');
+  if(wf < 50) recs.push('Workforce readiness at '+wf+'% requires acceleration. Expand university nuclear engineering intake and activate additional international fellowship placements.');
+  if(rg < 40) recs.push('Regional cooperation depth is low. Deeper EAC integration reduces per-unit cost and expands market for excess generation capacity.');
+  if(recs.length === 0) recs.push('Program parameters are strong. Maintain current trajectory. Focus on execution discipline and maintaining public trust through transparent reporting.');
+  document.getElementById('sim-recommendation').textContent = recs.join(' ');
+}
+
+function resetSimulator() {
+  document.getElementById('s-regSpeed').value = 18;
+  document.getElementById('s-govEquity').value = 20;
+  document.getElementById('s-dfi').value = 35;
+  document.getElementById('s-offtake').value = 400;
+  document.getElementById('s-workforce').value = 35;
+  document.getElementById('s-regional').value = 30;
+  document.getElementById('s-trust').value = 71;
+  runSimulator();
+}
+
+function applyOptimistic() {
+  document.getElementById('s-regSpeed').value = 9;
+  document.getElementById('s-govEquity').value = 30;
+  document.getElementById('s-dfi').value = 50;
+  document.getElementById('s-offtake').value = 800;
+  document.getElementById('s-workforce').value = 65;
+  document.getElementById('s-regional').value = 60;
+  document.getElementById('s-trust').value = 85;
+  runSimulator();
+}
+
+// ============================================================
+// BENCHMARKING
+// ============================================================
+const benchData = [
+  {name:'Egypt',    phase:'Under Construction', gov:95, legal:90, part:85, fin:90, tl:95, src:'https://capitalethiopia.com/2025/07/06/africa-eyes-small-modular-reactors-to-plug-power-gaps/'},
+  {name:'S. Africa',phase:'Operating',          gov:90, legal:95, part:80, fin:85, tl:90, src:'https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution'},
+  {name:'Ghana',    phase:'Milestone 2',        gov:85, legal:80, part:88, fin:65, tl:80, src:'https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries'},
+  {name:'Rwanda',   phase:'Phase 1 Complete',   gov:90, legal:65, part:82, fin:50, tl:75, src:'https://www.iaea.org/newscenter/pressreleases/iaea-reviews-rwandas-nuclear-power-infrastructure-development'},
+  {name:'Nigeria',  phase:'Milestone 1-2',      gov:75, legal:55, part:70, fin:60, tl:55, src:'https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution'},
+  {name:'Kenya',    phase:'Milestone 2 (Hold)', gov:60, legal:70, part:65, fin:45, tl:40, src:'https://world-nuclear.org/information-library/country-profiles/others/emerging-nuclear-energy-countries'},
+  {name:'Ethiopia', phase:'Milestone 1',        gov:70, legal:40, part:60, fin:35, tl:50, src:'https://www.nuclearbusiness-platform.com/media/insights/nuclear-dawn-africa-billion-energy-revolution'},
+];
+
+function buildBenchTable() {
+  const tbody = document.getElementById('benchBody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  benchData.forEach(d => {
+    const overall = Math.round((d.gov+d.legal+d.part+d.fin+d.tl)/5);
+    const color = overall>=80?'var(--teal)':overall>=60?'var(--amber)':'var(--red)';
+    const makebar = (v,c) => `<div class="bench-bar"><div class="bench-bar-fill" style="width:${v}%;background:${c};"></div></div>`;
+    const rwandaStyle = d.name==='Rwanda'?'style="background:rgba(240,165,0,0.04);"':'';
+    tbody.insertAdjacentHTML('beforeend',`<tr ${rwandaStyle}>
+      <td class="country">${d.name} <a class="src" href="${d.src}" target="_blank"></a></td>
+      <td style="font-size:0.72rem;color:var(--steel);">${d.phase}</td>
+      <td>${makebar(d.gov,'var(--teal)')}</td>
+      <td>${makebar(d.legal,'var(--amber)')}</td>
+      <td>${makebar(d.part,'var(--blue)')}</td>
+      <td>${makebar(d.fin,'var(--amber)')}</td>
+      <td>${makebar(d.tl,'var(--teal)')}</td>
+      <td style="font-family:var(--font-hero);font-size:1.1rem;color:${color};">${overall}</td>
+    </tr>`);
+  });
+}
+
+// ============================================================
+// RADAR CHART
+// ============================================================
+function drawRadar() {
+  const canvas = document.getElementById('radarChart');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.offsetWidth||400;
+  const H = 260;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2, R=Math.min(W,H)*0.36;
+  const dims = ['Govt Commit','Legal Frame','Partnerships','Financing','Timeline','Regulatory'];
+  const rwanda = [90,65,82,50,75,55];
+  const peerAvg= [78,68,70,56,62,52];
+  const n = dims.length;
+  function pt(val,i,r) {
+    const a = (Math.PI*2*i/n)-Math.PI/2;
+    const rad = r*(val/100);
+    return [cx+Math.cos(a)*rad, cy+Math.sin(a)*rad];
+  }
+  // Grid rings
+  [20,40,60,80,100].forEach(pct => {
+    ctx.beginPath();
+    for(let i=0;i<n;i++) {
+      const [x,y] = pt(pct,i,R);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(22,37,64,0.8)';ctx.lineWidth=1;ctx.stroke();
+  });
+  // Spokes
+  for(let i=0;i<n;i++) {
+    const [x,y] = pt(100,i,R);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);
+    ctx.strokeStyle='rgba(22,37,64,0.8)';ctx.lineWidth=1;ctx.stroke();
+    const [lx,ly] = pt(118,i,R);
+    ctx.fillStyle='rgba(107,127,163,0.9)';ctx.font=`${Math.max(9,W*0.022)}px DM Sans`;
+    ctx.textAlign='center';ctx.fillText(dims[i],lx,ly+4);
+  }
+  // Peer average
+  ctx.beginPath();
+  peerAvg.forEach((v,i) => {
+    const [x,y] = pt(v,i,R);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(107,127,163,0.08)';ctx.fill();
+  ctx.strokeStyle='rgba(107,127,163,0.4)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
+  // Rwanda
+  ctx.beginPath();
+  rwanda.forEach((v,i) => {
+    const [x,y] = pt(v,i,R);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(240,165,0,0.12)';ctx.fill();
+  ctx.strokeStyle='var(--amber)';ctx.lineWidth=2;ctx.stroke();
+  // Dots
+  rwanda.forEach((v,i) => {
+    const [x,y]=pt(v,i,R);
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle='var(--amber)';ctx.fill();
+  });
+  // Legend
+  ctx.fillStyle='var(--amber)';ctx.fillRect(16,H-30,14,2);
+  ctx.fillStyle='rgba(148,163,184,0.8)';ctx.font='11px DM Sans';ctx.textAlign='left';
+  ctx.fillText('Rwanda',36,H-26);
+  ctx.strokeStyle='rgba(107,127,163,0.4)';ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(110,H-29);ctx.lineTo(124,H-29);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillText('Peer Average',130,H-26);
+}
+
+// ============================================================
+// UNIVERSAL CHART RENDERER
+// ============================================================
+function drawLineChart(id,height,datasets,labels,yMax) {
+  const canvas = document.getElementById(id);
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.offsetWidth||600;
+  const H = height;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+  const pad={top:10,right:10,bottom:30,left:52};
+  const iW=W-pad.left-pad.right, iH=H-pad.top-pad.bottom;
+  const n=labels.length;
+  function xP(i){return pad.left+(i/(n-1))*iW;}
+  function yP(v){return pad.top+iH-(v/yMax)*iH;}
+  const steps=5;
+  for(let s=0;s<=steps;s++) {
+    const v=(yMax/steps)*s;
+    ctx.strokeStyle='rgba(22,37,64,0.7)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.left,yP(v));ctx.lineTo(pad.left+iW,yP(v));ctx.stroke();
+    ctx.fillStyle='rgba(107,127,163,0.7)';ctx.font='10px Share Tech Mono';ctx.textAlign='right';
+    ctx.fillText(v>=1000?(v/1000).toFixed(v>=10000?0:1)+'K':Math.round(v),pad.left-4,yP(v)+4);
+  }
+  ctx.fillStyle='rgba(107,127,163,0.7)';ctx.font='10px Share Tech Mono';ctx.textAlign='center';
+  labels.forEach((l,i)=>{if(i%Math.max(1,Math.floor(n/6))===0)ctx.fillText(l,xP(i),H-5);});
+  datasets.forEach(ds=>{
+    ctx.beginPath();ctx.moveTo(xP(0),yP(ds.data[0]));
+    ds.data.forEach((v,i)=>ctx.lineTo(xP(i),yP(v)));
+    ctx.lineTo(xP(n-1),yP(0));ctx.lineTo(xP(0),yP(0));ctx.closePath();
+    ctx.fillStyle=ds.fill;ctx.fill();
+    ctx.beginPath();ctx.moveTo(xP(0),yP(ds.data[0]));
+    ds.data.forEach((v,i)=>ctx.lineTo(xP(i),yP(v)));
+    ctx.strokeStyle=ds.color;ctx.lineWidth=2;
+    if(ds.dash)ctx.setLineDash(ds.dash);else ctx.setLineDash([]);
+    ctx.stroke();ctx.setLineDash([]);
+  });
+  let lx=pad.left;
+  datasets.forEach(ds=>{
+    ctx.fillStyle=ds.color;ctx.fillRect(lx,H-14,10,3);
+    ctx.fillStyle='rgba(148,163,184,0.8)';ctx.font='10px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText(ds.label,lx+14,H-11);
+    lx+=ctx.measureText(ds.label).width+34;
+  });
+}
+
+function drawEnergy() {
+  const labels=Array.from({length:24},(_,i)=>i+':00');
+  const demand=[],supply=[];
+  for(let i=0;i<24;i++){
+    demand.push(420+Math.sin(i*0.35)*130+(Math.random()*50));
+    supply.push(660+Math.random()*30);
+  }
+  drawLineChart('energyChart',200,[
+    {data:supply,color:'#00d4aa',fill:'rgba(0,212,170,0.08)',label:'Nuclear Output',dash:null},
+    {data:demand,color:'#f0a500',fill:'rgba(240,165,0,0.05)',label:'National Demand',dash:[4,3]}
+  ],labels,1000);
+}
+
+function drawDemand() {
+  const years=['2020','2022','2024','2026','2028','2030','2032','2034','2036','2038','2040','2045','2050'];
+  const dem=[350,420,650,780,950,1150,1400,1700,2100,2600,3100,3800,4500];
+  const nuc=[0,0,0,0,0,0,200,400,700,1200,1800,2600,3200];
+  drawLineChart('demandChart',200,[
+    {data:dem,color:'#f0a500',fill:'rgba(240,165,0,0.07)',label:'Projected Demand MW',dash:null},
+    {data:nuc,color:'#00d4aa',fill:'rgba(0,212,170,0.08)',label:'Nuclear Contribution MW',dash:null}
+  ],years,5000);
+}
+
+function drawWorkforce() {
+  const years=['24','25','26','27','28','29','30','31','32','33','34','35'];
+  const tr=[50,80,120,180,260,360,500,700,950,1200,1500,1800];
+  const tg=[50,100,180,280,400,550,750,1000,1300,1600,1800,1800];
+  drawLineChart('workforceChart',180,[
+    {data:tr,color:'#f0a500',fill:'rgba(240,165,0,0.08)',label:'Trained Staff (illustrative)',dash:null},
+    {data:tg,color:'#4da6ff',fill:'rgba(77,166,255,0.05)',label:'Required Target (illustrative)',dash:[4,3]}
+  ],years,2200);
+}
+
+// ============================================================
+// DOCUMENT HUB
+// ============================================================
+const docContent = {
+  investor: {
+    title:'RWANDA NUCLEAR ENERGY PROGRAM',
+    sub:'INVESTOR BRIEF / APRIL 2026',
+    body:`<h4>Executive Summary</h4>
+<p>Rwanda is pursuing nuclear energy deployment as a sovereign infrastructure priority. The Rwanda Atomic Energy Board (RAEB), established by Presidential Order in December 2020, serves as the implementing organisation. The IAEA completed its Integrated Nuclear Infrastructure Review Phase 1 mission in March 2026, confirming strong progress across all 19 infrastructure areas and identifying Rwanda's approach as a good practice for other countries.</p>
+<hr>
+<h4>The Investment Case</h4>
+<p>Rwanda's current installed electricity capacity stands at approximately 650 to 700 MW against projected mid-century demand of 2.5 to 4.5 GW. The country targets 60 to 70 percent of its electricity from nuclear in the long term. SMR units of 110 to 150 MW per module are the stated deployment strategy. SMR capital costs benchmark at USD 2 to 3 million per MW, making a 300 to 600 MW initial deployment a USD 600 million to USD 1.8 billion investment opportunity.</p>
+<hr>
+<h4>Risk and Mitigation</h4>
+<p>The primary risk at this stage is regulatory timeline, specifically completion of the national nuclear law through parliament and achievement of IAEA Milestone 2 readiness. Mitigation: Rwanda has an IAEA workplan for continued support and strong ministerial commitment. RAEB is actively conducting vendor prequalification and site characterisation in parallel.</p>
+<hr>
+<h4>Technology Partners</h4>
+<p>Dual Fluid Energy Inc. (Canadian-German, cooperation agreement September 2023). NANO Nuclear Energy Inc. (NASDAQ: NNE, MOU August 2024) including ZEUS and ODIN reactor designs and Cambridge Nuclear Energy Centre academic collaboration. Technology vendor selection via competitive prequalification is planned.</p>
+<hr>
+<h4>Market Context</h4>
+<p>Africa's nuclear investment pipeline is estimated at USD 105 billion with 15,000 MW of potential capacity by 2035. Rwanda as first-mover SMR deployment in East Africa provides an unmatched proof-of-concept position. Anchor industrial demand from mining, data centres, and manufacturing sectors supports offtake framework development. Sources: Nuclear Business Platform (March 2026), IAEA (March 2026).</p>`
+  },
+  govt: {
+    title:'RWANDA NUCLEAR PROGRAM',
+    sub:'GOVERNMENT BRIEFING / APRIL 2026',
+    body:`<h4>Current Status</h4>
+<p>The IAEA completed the Phase 1 Integrated Nuclear Infrastructure Review from 2 to 9 March 2026. The ten-member team assessed all 19 infrastructure areas and confirmed Rwanda is making significant progress. Rwanda's government coordination, stakeholder engagement, and emergency preparedness were identified as good practices for other countries.</p>
+<hr>
+<h4>Three Priority Actions (IAEA Recommended)</h4>
+<p>1. Finalise the comprehensive national decision-making report to guide Rwanda's formal national decision on nuclear power. This is the critical path item for Phase 2 readiness.</p>
+<p>2. Complete the review of the national nuclear legislation. The comprehensive law was drafted in 2025 covering licensing, safety, waste management, and liability. Parliamentary enactment is required before construction permit or vendor contract.</p>
+<p>3. Continue developing and adopting strategic policies and the regulatory framework required for the long-term programme. RAEB is conducting vendor prequalification in parallel.</p>
+<hr>
+<h4>Program Timeline</h4>
+<p>The government's official target is first SMR operational in the early 2030s. An integrated workplan between the IAEA and Rwanda will be developed to continue providing coordinated support as the programme advances from Phase 1 to Phase 2 readiness.</p>
+<hr>
+<h4>Key Authorities</h4>
+<p>RAEB (Rwanda Atomic Energy Board): Implementing organisation. KG 13 Avenue 20, Nyarutarama, Kigali. Ministry of Infrastructure: Policy oversight. Minister Jimmy Gasore confirmed transparent and responsible development commitment March 2026.</p>`
+  },
+  supply: {
+    title:'RWANDA NUCLEAR PROGRAM',
+    sub:'PRIVATE SECTOR PARTICIPATION BRIEF / APRIL 2026',
+    body:`<h4>Program Overview</h4>
+<p>Rwanda is developing a nuclear energy program targeting SMR units of 110 to 150 MW per module with a first deployment in the early 2030s. The Rwanda Atomic Energy Board (RAEB) is the implementing organisation. The IAEA completed Phase 1 review in March 2026 confirming strong institutional foundations. This creates a defined pipeline of professional services and supply chain opportunities.</p>
+<hr>
+<h4>Current Procurement Opportunities</h4>
+<p>The program is currently in pre-project infrastructure development. Opportunities at this stage include: owner engineering services, environmental and site characterisation studies, legal and regulatory advisory, financial structuring advisory, human resource development and training programme design, communications and public engagement services, and technology vendor prequalification support.</p>
+<hr>
+<h4>Future Supply Chain Categories</h4>
+<p>As the programme advances to Phase 2 and construction: civil and geotechnical works, transmission and grid integration infrastructure, nuclear island construction (EPC), mechanical and electrical installation, instrumentation and control systems, security systems, waste management facilities, and operations and maintenance services.</p>
+<hr>
+<h4>Local Content Framework</h4>
+<p>Rwanda's industrial development strategy targets maximum local content participation in civil works, logistics, construction support, professional services, and community facilities. International contractors entering the Rwanda market are expected to present local subcontracting and training plans as part of their proposals.</p>
+<hr>
+<h4>Engagement Pathway</h4>
+<p>Primary contact: Rwanda Atomic Energy Board (RAEB), KG 13 Avenue 20, Nyarutarama, Kigali. Website: raeb.gov.rw. Also attend the Africa Nuclear Business Platform, Abuja, Nigeria, 22 to 23 April 2026.</p>`
+  },
+  regional: {
+    title:'AFRICA NUCLEAR COOPERATION FRAMEWORK',
+    sub:'REGIONAL BRIEF / APRIL 2026',
+    body:`<h4>Continental Context</h4>
+<p>Six hundred million Africans have no access to electricity. Africa's total electricity generation is expected to grow sevenfold by 2050. The continent produces 14 percent of global uranium supply. Africa's nuclear investment pipeline is estimated at USD 105 billion with 15,000 MW of potential capacity by 2035 (Nuclear Business Platform, March 2026).</p>
+<hr>
+<h4>Country Status Summary</h4>
+<p>Egypt is under active construction at El-Dabaa (4,800 MW, Rosatom, USD 30 billion). South Africa is the only operating nuclear country on the continent with Koeberg and expansion plans. Ghana has advanced SMR agreements with NuScale and Regnum Technology targeting 1,000 MW by 2034. Rwanda completed IAEA Phase 1 INIR in March 2026 with first SMR targeted early 2030s. Kenya's nuclear programme is on hold following NuPEA dissolution in January 2025. Ethiopia and Nigeria are in early development stage.</p>
+<hr>
+<h4>The Rwanda Proof-of-Concept Model</h4>
+<p>Rwanda is demonstrating that grid size and infrastructure starting point are not binding constraints on nuclear adoption. A successful Rwanda SMR deployment provides an operating reference plant in a small-grid emerging market context, the most commercially valuable demonstration any new nuclear technology can possess. Ghana, Uganda, Nigeria, Kenya, and Ethiopia are watching closely. A successful Rwanda programme accelerates commercial confidence across every emerging nuclear market in Africa.</p>
+<hr>
+<h4>Cooperation Framework Opportunities</h4>
+<p>Regulatory harmonisation through AFRA (African Regional Cooperative Agreement for Research). East African Power Pool framework for cross-border energy trade. Shared procurement to reduce per-unit costs. Coordinated human resource development programmes. Mutual recognition of site and safety assessments. The African Continental Free Trade Area electricity needs will account for 8 percent of continental capacity by 2035 and 14 percent by 2040 (Africa Renewal, UN).</p>`
+  },
+  edu: {
+    title:'NUCLEAR ENERGY FOR AFRICA',
+    sub:'EDUCATIONAL OVERVIEW / APRIL 2026',
+    body:`<h4>What is Nuclear Energy</h4>
+<p>Nuclear energy is produced by splitting uranium atoms in a controlled process called fission. The heat released produces steam, which drives turbines to generate electricity. No burning occurs, so there are no carbon dioxide or air pollution emissions during operation. Nuclear produces about 10 percent of global electricity from a very small amount of fuel. One kilogram of uranium produces as much energy as approximately 3,000 tonnes of coal.</p>
+<hr>
+<h4>What Are Small Modular Reactors</h4>
+<p>Small Modular Reactors (SMRs) generate between 10 and 300 MW of electricity. Conventional large reactors generate 1,000 MW or more. SMRs are built in factories and assembled at site, reducing construction time and cost. Rwanda's strategy focuses on units of 110 to 150 MW per module. SMRs feature passive safety systems that shut down automatically without power or human action. This makes them particularly well suited to countries building nuclear infrastructure for the first time.</p>
+<hr>
+<h4>Rwanda's Nuclear Program</h4>
+<p>Rwanda established the Rwanda Atomic Energy Board (RAEB) in December 2020 as the implementing organisation of the national nuclear programme. In March 2026, the IAEA completed an Integrated Nuclear Infrastructure Review (INIR) confirming strong progress across all 19 infrastructure areas. The IAEA identified Rwanda's government coordination, stakeholder engagement, and emergency preparedness as good practices for other countries. Rwanda targets nuclear supplying 60 to 70 percent of its national electricity in the medium to long term, with the first SMR operational in the early 2030s.</p>
+<hr>
+<h4>Safety and Environment</h4>
+<p>Nuclear energy has one of the lowest death rates per unit of energy of any source, lower than solar and wind when accounting for manufacturing and installation. The radiation dose at a plant boundary is approximately 0.1 mSv per year, compared to 2.4 mSv of average natural background radiation globally. The volume of waste is extremely small: all the spent fuel from 60 years of US nuclear operation would fit in a single large warehouse. All nuclear facilities operate under IAEA safeguards with regular international inspections.</p>
+<hr>
+<h4>Why Africa Now</h4>
+<p>Six hundred million Africans have no electricity access. Africa's demand will grow sevenfold by 2050. SMR technology is reaching commercial readiness at exactly this moment. Countries that prepare their regulatory, workforce, and financing frameworks now will be able to deploy in the 2030s. Countries that wait face a 10 to 15 year delay. Rwanda's programme is not only building a power plant. It is building the template for African nuclear development.</p>`
+  },
+  media: {
+    title:'RWANDA NUCLEAR PROGRAM',
+    sub:'MEDIA BRIEF / KEY FACTS AND CONTEXT / APRIL 2026',
+    body:`<h4>Key Facts</h4>
+<p>Rwanda established the Rwanda Atomic Energy Board (RAEB) in December 2020 via Presidential Order 127/01. The IAEA completed an Integrated Nuclear Infrastructure Review (INIR) Phase 1 mission in Rwanda from 2 to 9 March 2026. The ten-member team included experts from Egypt, Estonia, Kenya and Pakistan plus six IAEA staff. Rwanda's current electricity capacity is approximately 650 to 700 MW. The country targets nuclear supplying 60 to 70 percent of national electricity. The first SMR is targeted for the early 2030s. SMR units will be 110 to 150 MW per module.</p>
+<hr>
+<h4>IAEA Assessment (March 2026)</h4>
+<p>The IAEA confirmed Rwanda is making significant progress. Three practices were identified as models for other countries: strong government coordination, proactive stakeholder engagement, and early emergency preparedness planning. Three priority actions were recommended: finalise the national decision-making report, complete the nuclear law review, and advance the regulatory framework.</p>
+<hr>
+<h4>Technology Partners (Verified)</h4>
+<p>Dual Fluid Energy Inc. (Canadian-German): Cooperation agreement signed September 2023. NANO Nuclear Energy Inc. (NASDAQ: NNE): MOU signed August 2024 for SMR and microreactor ecosystem development including Cambridge Nuclear Energy Centre collaboration. Russia (Rosatom): Intergovernmental agreement signed 2019 for Centre for Nuclear Science and Technology. No final technology vendor has been selected.</p>
+<hr>
+<h4>Authoritative Quotes</h4>
+<p>President Paul Kagame, Nuclear Energy Summit Paris, March 2026: "Nuclear energy is not too complex or risky for developing countries. The standards developed by the IAEA provide a universal framework that can be applied by countries at every income level."</p>
+<p>Mehmet Ceyhan, IAEA Technical Lead, March 2026: "Strong government support and the effective coordination of the preparatory work helped Rwanda make significant progress towards deciding on a nuclear power programme."</p>
+<p>Minister Jimmy Gasore, March 2026: "The government remains committed to the responsible and transparent development of nuclear energy."</p>
+<hr>
+<h4>Primary Sources</h4>
+<p>IAEA Press Release (March 2026): iaea.org | RAEB Official: raeb.gov.rw | World Nuclear News: world-nuclear-news.org | Nuclear Business Platform: nuclearbusiness-platform.com</p>`
+  }
+};
+
+function selectDoc(el, key) {
+  document.querySelectorAll('.doc-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = docContent[key];
+  document.getElementById('docPreview').innerHTML = `
+    <div class="doc-preview-title">${d.title}</div>
+    <div class="doc-preview-sub">${d.sub}</div>
+    <hr>${d.body}`;
+  document.getElementById('docActions').style.display = 'flex';
+}
+
+function printDoc() { window.print(); }
+function copyDocText() {
+  const text = document.getElementById('docPreview').innerText;
+  navigator.clipboard.writeText(text).then(() => alert('Document text copied to clipboard.'));
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', () => {
+  updateScience();
+  updateFinance();
+  buildBenchTable();
+  runSimulator();
+  // Animate progress bars
+  document.querySelectorAll('.prog-fill').forEach((el,i) => {
+    const w = el.style.width;
+    el.style.width='0';
+    setTimeout(()=>{ el.style.width=w; }, 300+i*60);
+  });
+});
+
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.module.active');
+  if(!active) return;
+  const id = active.id;
+  if(id==='mod-science')   drawEnergy();
+  if(id==='mod-demand')    drawDemand();
+  if(id==='mod-workforce') drawWorkforce();
+  if(id==='mod-benchmark') drawRadar();
+});
+</script>
+</body>
+</html>
